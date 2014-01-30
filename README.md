@@ -1,7 +1,7 @@
 cycle-nav
 =========
 
-CE 131: Human Computer Interaction Class Project
+CE 131 : Human Computer Interaction Class Project
 
 ####Getting the source (Making Android, Github & eclipse play nice together)  
 1.  In ADT, select __File > Import__ select __“Git” > “Projects from Git”__
