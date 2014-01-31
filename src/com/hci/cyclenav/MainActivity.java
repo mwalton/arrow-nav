@@ -1,7 +1,7 @@
 package com.hci.cyclenav;
 
 import android.os.Bundle;
-import android.app.Activity;
+//import android.app.Activity;
 import android.view.Menu;
 
 import com.mapquest.android.maps.GeoPoint;
