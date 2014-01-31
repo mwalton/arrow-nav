@@ -8,6 +8,7 @@ import com.mapquest.android.maps.GeoPoint;
 import com.mapquest.android.maps.MapActivity;
 import com.mapquest.android.maps.MapView;
 import com.mapquest.android.maps.MyLocationOverlay;
+import com.mapquest.android.maps.RouteManager;
 
 public class MainActivity extends MapActivity {
 
@@ -20,12 +21,13 @@ public class MainActivity extends MapActivity {
       setContentView(R.layout.activity_main);
       setupMapView();
       setupMyLocation();
+      //displayRoute();
     }
 
     // set your map and enable default zoom controls 
     private void setupMapView() {
       this.map = (MapView) findViewById(R.id.map);
-      map.setBuiltInZoomControls(true);
+      //map.setBuiltInZoomControls(true);
     }
 
     // set up a MyLocationOverlay and execute the runnable once we have a location fix 
@@ -39,10 +41,16 @@ public class MainActivity extends MapActivity {
           map.getController().animateTo(currentLocation);
           map.getController().setZoom(14);
           map.getOverlays().add(myLocationOverlay);
-          myLocationOverlay.setFollowing(true);
+          //myLocationOverlay.setFollowing(true);
         }
       });
     }
+    
+    private void displayRoute() {
+        RouteManager routeManager = new RouteManager(this);
+        routeManager.setMapView(map);
+        routeManager.createRoute("San Francisco, CA", "Fremont, CA");
+      }
 
     // enable features of the overlay 
     @Override
@@ -62,7 +70,7 @@ public class MainActivity extends MapActivity {
 
     @Override
     public boolean isRouteDisplayed() {
-      return false;
+      return true;
     }
 
 	@Override

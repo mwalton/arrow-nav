@@ -1,10 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-  <com.mapquest.android.maps.MapView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/map"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:clickable="true"
-    android:apiKey="YOUR_APPKEY_HERE"
-  />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <RelativeLayout 
+        android:id="@+id/headerLayout"
+   		android:layout_width="match_parent" 
+       	android:layout_height="wrap_content">
+       	
+        <EditText android:id="@+id/edit_message"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:hint="@string/search" />
+    </RelativeLayout>
+    
+    <RelativeLayout 
+        android:id="@+id/mapLayout"
+   		android:layout_width="match_parent" 
+       	android:layout_height="wrap_content">
+        <com.mapquest.android.maps.MapView
+		    xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:id="@+id/map"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:scaleX="2.5"
+		    android:scaleY="2.5"
+		    android:clickable="true"
+		    android:enabled="true"
+		    android:apiKey="@string/api_key"
+  		/>
+    </RelativeLayout>
+</LinearLayout>
+
+  
