@@ -2,6 +2,14 @@ package com.hci.cyclenav;
 
 import android.content.Context;
 
+/* HttpUtil.java
+ * 
+ * Simple HTTP request helper class
+ * Simplifies & sanitizes adding key-value pairs to be sent in the API call
+ * This class is designed for use by JSONHelper
+ * 
+ */
+
 public class HttpUtil {
 	StringBuilder httpStr;
 	String baseUrl;
@@ -17,12 +25,13 @@ public class HttpUtil {
 		from = src;
 		api_key = c.getString(R.string.api_key);
 		
-		httpStr.append(baseUrl);
-		append("key", api_key);
+		httpStr.append(baseUrl);	//start w/ the URL
+		append("key", api_key);		//append the API key
 	}
 	
 	//Builds and returns the finished HTTP request
 	public String getHttp() {
+		//if any keys are undefined, set them to default values
 		if(httpStr.indexOf("routeType") < 0) append("routeType", "bicycle");
 		if(httpStr.indexOf("narrativeType") < 0) append("narrativeType", "text");
 		if(httpStr.indexOf("shapeFormat") < 0) append("shapeFormat", "raw");
@@ -34,6 +43,7 @@ public class HttpUtil {
 		if(httpStr.indexOf("direction") < 0) append("direction", -1);
 		if(httpStr.indexOf("avoidManeuverDuration") < 0) append("avoidManeuverDuration", -1);
 		
+		//return the finished HTTP request string
 		return httpStr.toString();
 	}
 	

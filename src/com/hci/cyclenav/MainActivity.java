@@ -18,40 +18,59 @@ import com.mapquest.android.maps.RouteManager;
 import com.mapquest.android.maps.RouteResponse;
 import com.mapquest.android.maps.ServiceResponse.Info;
 
+
+/* MainActivity.java (at some point should be named something more descriptive)
+ * Layout: cycle-nav/res/layout/activity_main.xml
+ * 
+ * onCreate outlines a rough algorithm for map initialization:
+ * 1. Get any saved instance from memory
+ * 2. Set the view
+ * 3. init the map
+ * 5. configure the route manager
+ * 6. get the user's location and localize the map
+ * 
+ * Search location runs when the search button is pressed
+ * 1. gets destination string from text field
+ * 2. gets user location lat/lng
+ * 3. clears the current route (if one exists)
+ * 4. creates the route
+ */
+
 public class MainActivity extends MapActivity {
 
-	protected MapView map;
-    private MyLocationOverlay myLocationOverlay;
-    private RouteManager myRoute;
-    private boolean routeOverlay;
+	protected MapView map;							//the map object
+    private MyLocationOverlay myLocationOverlay;	//a dot representing the user
+    private RouteManager myRoute;					//calculates and displays route
+    private boolean routeDisplayed;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.activity_main);
       
-      setupMapView();
-      setupRoute();
-      setupMyLocation();
+      setupMapView();								//make the map
+      setupRoute();									//setup routeManager & err handling
+      setupMyLocation();							//localize the map to the user
     }
     
-    
+    //Called when the user presses the search button
     public void searchLocation(View view) {
     	EditText editText = (EditText) findViewById(R.id.location_field);
-    	String searchText = editText.getText().toString();
+    	String to = editText.getText().toString();
     	
+    	//Get the user's location from myLocationOverlay
     	String from = myLocationOverlay.getMyLocation().getLatitude() + 
     			"," + myLocationOverlay.getMyLocation().getLongitude();
-    	String to = searchText;
+    	
+    	//Clear the current route ribbon (if one exists) and make a new one
     	if (isRouteDisplayed()) myRoute.clearRoute();
     	myRoute.createRoute(from, to);
     	setDisplayed(true);
     }
-
-    // set map
+    
+    //Link the map in the layout to the mapView object
     private void setupMapView() {
-      this.map = (MapView) findViewById(R.id.map);
-      //map.setBuiltInZoomControls(true);
+    	this.map = (MapView) findViewById(R.id.map);
     }
 
     // set up a MyLocationOverlay and execute the runnable once we have a location fix 
@@ -65,7 +84,9 @@ public class MainActivity extends MapActivity {
           map.getController().animateTo(currentLocation);
           map.getController().setZoom(14);
           map.getOverlays().add(myLocationOverlay);
-          //myLocationOverlay.setFollowing(true);
+          
+          //should be set to true once navigation begins:
+          myLocationOverlay.setFollowing(false);  //don't follow the user's location
         }
       });
     }
@@ -92,8 +113,15 @@ public class MainActivity extends MapActivity {
     	String key = getString(R.string.api_key);
     	myRoute = new RouteManager(this, key);
         myRoute.setMapView(map);
+        
+        /*Configure error handling and success feedback notifications
+         * when the user attempts to create a new route
+         * 
+         * RouteCallback throws RouteResponse objects when createRoute() is called
+         * if an error occurs, the code in onError() runs and a error Toast is generated
+         * if the route is generated successfully, onSuccess() is called
+         */
         myRoute.setRouteCallback(new RouteManager.RouteCallback() {
-
 			@Override
 			public void onError(RouteResponse routeResponse) {
 				Info info=routeResponse.info;
@@ -109,18 +137,20 @@ public class MainActivity extends MapActivity {
 			@Override
 			public void onSuccess(RouteResponse routeResponse) {
 				Toast.makeText(getApplicationContext(), "Calculating route", Toast.LENGTH_LONG).show();
-				//STUB
 			}
 		});
     }
 
+    /* isRouteDisplayed() and setDisplayed() are just used to
+    *  check if a previous route needs to be cleared
+    */
     @Override
     public boolean isRouteDisplayed() {
-      return routeOverlay;
+      return routeDisplayed;
     }
     
     private void setDisplayed(boolean isDisplayed) {
-    	routeOverlay = isDisplayed;
+    	routeDisplayed = isDisplayed;
     }
 
 	@Override

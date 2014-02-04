@@ -10,6 +10,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.google.gson.Gson;
 
+/* JSONHelper.java
+ * Standard use case:
+ * Query the Open Guidance Services API to get a Route JSON object
+ * Parse the object using GSON
+ * Return a new GuidanceRoute object
+*/
+
 public class JSONHelper {
 	private URL url;
 	private int timeout;

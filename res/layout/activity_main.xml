@@ -41,9 +41,6 @@
 		    android:enabled="true"
 		    android:apiKey="@string/api_key"
   		/>
-
-        
-
     </RelativeLayout>
 </LinearLayout>
 
