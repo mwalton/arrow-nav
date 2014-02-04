@@ -35,6 +35,7 @@ public class MainActivity extends MapActivity {
       setupMyLocation();
     }
     
+    
     public void searchLocation(View view) {
     	EditText editText = (EditText) findViewById(R.id.location_field);
     	String searchText = editText.getText().toString();
@@ -98,7 +99,7 @@ public class MainActivity extends MapActivity {
 				Info info=routeResponse.info;
 				int statusCode=info.statusCode;
 				
-				StringBuilder message =new StringBuilder();
+				StringBuilder message = new StringBuilder();
 				message.append("Unable to create route.\n")
 					.append("Error: ").append(statusCode).append("\n")
 					.append("Message: ").append(info.messages);
