@@ -27,6 +27,8 @@ public class HttpUtil {
 		
 		httpStr.append(baseUrl);	//start w/ the URL
 		append("key", api_key);		//append the API key
+		append("from", src);
+		append("to", dest);
 	}
 	
 	//Builds and returns the finished HTTP request
@@ -34,17 +36,14 @@ public class HttpUtil {
 		//if any keys are undefined, set them to default values
 		if(httpStr.indexOf("routeType") < 0) append("routeType", "bicycle");
 		if(httpStr.indexOf("narrativeType") < 0) append("narrativeType", "text");
-		if(httpStr.indexOf("shapeFormat") < 0) append("shapeFormat", "raw");
-		if(httpStr.indexOf("outFormat") < 0) append("outFormat", "json");
-		if(httpStr.indexOf("units") < 0) append("units", 'm');
 		if(httpStr.indexOf("fishbone") < 0) append("fishbone", "false");
-		if(httpStr.indexOf("generalizeAfter") < 0) append("generalizeAfter", 500);
-		if(httpStr.indexOf("generalize") < 0) append("generalize", 0);
-		if(httpStr.indexOf("direction") < 0) append("direction", -1);
-		if(httpStr.indexOf("avoidManeuverDuration") < 0) append("avoidManeuverDuration", -1);
+		if(httpStr.indexOf("callback") < 0) append("callback", "renderBasicInformation");
+		
+		
+		String noWhitespace = httpStr.toString().replaceAll("\\s+", "%20");
 		
 		//return the finished HTTP request string
-		return httpStr.toString();
+		return noWhitespace;
 	}
 	
 	//Append methods

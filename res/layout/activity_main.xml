@@ -18,13 +18,21 @@
 	        android:singleLine="true"
 		    android:lines="1"
 		    android:scrollHorizontally="true"
-	        android:hint="@string/location_label" />
+	        android:hint="@string/location_label" 
+	        android:text="Soquel, CA"
+	        />
         <Button
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="@string/search"
 	        android:onClick="searchLocation" />
     </LinearLayout>
+    
+    <Button
+        android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/start_nav"
+		android:onClick="beginNavigation" />
     
     <RelativeLayout 
         android:id="@+id/mapLayout"

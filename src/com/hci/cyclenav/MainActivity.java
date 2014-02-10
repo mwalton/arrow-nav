@@ -37,7 +37,10 @@ import com.mapquest.android.maps.ServiceResponse.Info;
  */
 
 public class MainActivity extends MapActivity {
-
+	public final static String DESTINATION = "com.example.myfirstapp.DESTINATION";
+	public final static String USR_LAT = "com.example.myfirstapp.USR_LAT";
+	public final static String USR_LNG = "com.example.myfirstapp.USR_LNG";
+	
 	protected MapView map;							//the map object
     private MyLocationOverlay myLocationOverlay;	//a dot representing the user
     private RouteManager myRoute;					//calculates and displays route
@@ -51,6 +54,22 @@ public class MainActivity extends MapActivity {
       setupMapView();								//make the map
       setupRoute();									//setup routeManager & err handling
       setupMyLocation();							//localize the map to the user
+    }
+    
+    public void beginNavigation(View view) {
+    	Intent intent = new Intent(this, CycleNavigation.class);
+    	EditText editText = (EditText) findViewById(R.id.location_field);
+    	String to = editText.getText().toString();
+    	
+    	//Get the user's location from myLocationOverlay
+    	double lat = myLocationOverlay.getMyLocation().getLatitude();
+    	double lng = myLocationOverlay.getMyLocation().getLongitude();
+    	
+    	intent.putExtra(DESTINATION, to);
+    	intent.putExtra(USR_LAT, lat);
+    	intent.putExtra(USR_LNG, lng);
+    	
+    	startActivity(intent);
     }
     
     //Called when the user presses the search button
