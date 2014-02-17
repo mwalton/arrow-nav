@@ -16,6 +16,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.MalformedJsonException;
 import com.hci.cyclenav.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -231,22 +233,20 @@ public class CycleNavigation extends Activity {
 
 	    @Override
 	    protected void onPostExecute(String result) {
-	    	//super.onPostExecute(result);
-	    	
-	    	//OGS returns some messy JSON so we need to clean it up first
-	    	result = result.split("\\(")[1];
-	    	result = result.split("\\)")[0];
+	    	TextView textView = (TextView) findViewById(R.id.fullscreen_content);
 	    	
 	    	JsonParser parser = new JsonParser();
-	    	JsonObject obj = parser.parse(result).getAsJsonObject();
 	    	
-	    	Gson gson = new Gson();
-	    	GuidanceData data = gson.fromJson(obj.get("guidance"), GuidanceData.class);
-	    	
-	    	GuidanceRoute route = new GuidanceRoute(data);
-	    	
-	    	TextView textView = (TextView) findViewById(R.id.fullscreen_content);
-		    textView.setText(route.toString());
+	    	try {
+	    		JsonObject obj = parser.parse(result).getAsJsonObject();
+	    		Gson gson = new Gson();
+	    		GuidanceData data = gson.fromJson(obj.get("guidance"), GuidanceData.class);
+	    		GuidanceRoute route = new GuidanceRoute(data);
+	    		textView.setText(route.toString());
+	    	} catch (JsonSyntaxException er) {
+				Toast.makeText(getApplicationContext(), er.toString(), Toast.LENGTH_LONG).show();
+				textView.setText("\n\n\n\nBad JSON formatting: " + "\n" + er.toString());
+	    	}
 	    }
 	}
 }

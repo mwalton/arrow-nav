@@ -72,8 +72,15 @@ public class MainActivity extends MapActivity {
     	startActivity(intent);
     }
     
+    public void setUserFocus(View view) {
+    	GeoPoint currentLocation = myLocationOverlay.getMyLocation();
+        map.getController().animateTo(currentLocation);
+        map.getController().setZoom(14);
+        map.getOverlays().add(myLocationOverlay);
+    }
+    
     //Called when the user presses the search button
-    public void searchLocation(View view) {
+    public void drawRoute(View view) {
     	EditText editText = (EditText) findViewById(R.id.location_field);
     	String to = editText.getText().toString();
     	
@@ -84,6 +91,7 @@ public class MainActivity extends MapActivity {
     	//Clear the current route ribbon (if one exists) and make a new one
     	if (isRouteDisplayed()) myRoute.clearRoute();
     	myRoute.createRoute(from, to);
+    	//map.getController().zoomOut();
     	setDisplayed(true);
     }
     
@@ -132,6 +140,7 @@ public class MainActivity extends MapActivity {
     	String key = getString(R.string.api_key);
     	myRoute = new RouteManager(this, key);
         myRoute.setMapView(map);
+        myRoute.setBestFitRoute(false);
         
         /*Configure error handling and success feedback notifications
          * when the user attempts to create a new route
