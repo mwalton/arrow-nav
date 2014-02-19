@@ -19,7 +19,7 @@ import com.mapquest.android.maps.RouteResponse;
 import com.mapquest.android.maps.ServiceResponse.Info;
 
 
-/* MainActivity.java (at some point should be named something more descriptive)
+/* MainActivity.java
  * Layout: cycle-nav/res/layout/activity_main.xml
  * 
  * onCreate outlines a rough algorithm for map initialization:
@@ -29,7 +29,13 @@ import com.mapquest.android.maps.ServiceResponse.Info;
  * 5. configure the route manager
  * 6. get the user's location and localize the map
  * 
- * Search location runs when the search button is pressed
+ * showGuidanceNarrative called by get_guidance_narrative onClick
+ * 1. gets destination string
+ * 2. gets user lat/lng
+ * 3. stores them in an intent
+ * 3. passes the intent and starts GuidanceNarrative activity
+ * 
+ * drawRoute is called by show_route onClick
  * 1. gets destination string from text field
  * 2. gets user location lat/lng
  * 3. clears the current route (if one exists)
@@ -56,7 +62,9 @@ public class MainActivity extends MapActivity {
       setupMyLocation();							//localize the map to the user
     }
     
+    //called by get_guidance_narrative button onclick
     public void showGuidanceNarrative(View view) {
+    	//make a new intent to be passed to the GuidanceNarrative activity
     	Intent intent = new Intent(this, GuidanceNarrative.class);
     	EditText editText = (EditText) findViewById(R.id.location_field);
     	String to = editText.getText().toString();
@@ -65,13 +73,16 @@ public class MainActivity extends MapActivity {
     	double lat = myLocationOverlay.getMyLocation().getLatitude();
     	double lng = myLocationOverlay.getMyLocation().getLongitude();
     	
+    	//add the destination & user location
     	intent.putExtra(DESTINATION, to);
     	intent.putExtra(USR_LAT, lat);
     	intent.putExtra(USR_LNG, lng);
     	
+    	//start a new GuidanceNarrative
     	startActivity(intent);
     }
     
+    //moves the map view so the user's location is centered on the screen
     public void setUserFocus(View view) {
     	GeoPoint currentLocation = myLocationOverlay.getMyLocation();
         map.getController().animateTo(currentLocation);
@@ -79,7 +90,7 @@ public class MainActivity extends MapActivity {
         map.getOverlays().add(myLocationOverlay);
     }
     
-    //Called when the user presses the search button
+    //Called when the user presses the 'pin' button
     public void drawRoute(View view) {
     	EditText editText = (EditText) findViewById(R.id.location_field);
     	String to = editText.getText().toString();

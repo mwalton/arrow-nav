@@ -5,8 +5,15 @@ import java.util.ArrayList;
 import com.mapquest.android.maps.BoundingBox;
 import com.mapquest.android.maps.GeoPoint;
 
+/* GuidanceRoute.java
+ * 
+ * Container class for storing an ArrayList of GuidanceNodes
+ * constructors accept either an arraylist of GuidanceNodes (for retrieval 
+ * from a parcel) or GuidanceData for generating a new route from JSON
+ * also has methods for calculating distance between nodes and the user
+ */
+
 public class GuidanceRoute {
-	//BoundingBox boundingBox;
 	ArrayList<GuidanceNode> nodes;
 	int currentNodeIndex;
 	
@@ -14,6 +21,7 @@ public class GuidanceRoute {
 		// TODO Auto-generated constructor stub
 	}
 	
+	//accept deserialized GuidanceNodes and wrap in a new route
 	public GuidanceRoute(ArrayList<GuidanceNode> nodes) {
 		currentNodeIndex = 0;
 		this.nodes = nodes;
@@ -25,11 +33,6 @@ public class GuidanceRoute {
     /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	
 	public GuidanceRoute(GuidanceData d) {
-		/*
-		GeoPoint ul = new GeoPoint(d.boundingBox.ul.lat, d.boundingBox.ul.lng);
-		GeoPoint lr = new GeoPoint(d.boundingBox.lr.lat, d.boundingBox.lr.lng);
-		boundingBox = new BoundingBox(ul, lr);
-		*/
 		ArrayList<GeoPoint> pointList = getPoints(d.shapePoints);
 		
 		nodes = new ArrayList<GuidanceNode>();
@@ -60,6 +63,7 @@ public class GuidanceRoute {
 		}
 	}
 	
+	//expose the nodes for serialization and parceling
 	public ArrayList<GuidanceNode> getNodes() {
 		return nodes;
 	}

@@ -34,6 +34,12 @@ import android.widget.Toast;
 
 import com.hci.cyclenav.guidance.*;
 
+/* ArrowNavigaiton.java
+ * Layout: cycle-nav/res/layout/activity_arrrow_navigation.xml
+ * 
+ * Turn-by-turn arrow navigation
+ */
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
