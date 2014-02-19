@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,12 +43,15 @@ public class GuidanceNarrative extends Activity {
 		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
 		
 		TextView textView = (TextView) findViewById(R.id.test_narrative);
+		textView.setMovementMethod(new ScrollingMovementMethod());
 	    textView.setText(destination + "\n" + usrLat + "\n" + usrLng);
 	    
 	    //Construct the appropriate HTTP request and send it to JSONhelper
 	    Toast.makeText(getApplicationContext(), "Calculating Route" , Toast.LENGTH_LONG).show();
 	    String source = usrLat + ", " + usrLng;
-	    String request = new HttpUtil(this, destination, source).getHttp();
+	    
+	    String request = new HttpUtil(this, source, destination).getHttp();
+	    
 	    Logger.getLogger(Logger.class.getName()).log(Level.INFO, request);
 	    JSONHelper json = new JSONHelper();
     	json.execute(request);
