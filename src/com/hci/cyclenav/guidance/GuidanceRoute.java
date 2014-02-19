@@ -6,12 +6,17 @@ import com.mapquest.android.maps.BoundingBox;
 import com.mapquest.android.maps.GeoPoint;
 
 public class GuidanceRoute {
-	BoundingBox boundingBox;
+	//BoundingBox boundingBox;
 	ArrayList<GuidanceNode> nodes;
 	int currentNodeIndex;
 	
 	public GuidanceRoute() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	public GuidanceRoute(ArrayList<GuidanceNode> nodes) {
+		currentNodeIndex = 0;
+		this.nodes = nodes;
 	}
 	
 	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
@@ -20,10 +25,11 @@ public class GuidanceRoute {
     /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	
 	public GuidanceRoute(GuidanceData d) {
+		/*
 		GeoPoint ul = new GeoPoint(d.boundingBox.ul.lat, d.boundingBox.ul.lng);
 		GeoPoint lr = new GeoPoint(d.boundingBox.lr.lat, d.boundingBox.lr.lng);
 		boundingBox = new BoundingBox(ul, lr);
-		
+		*/
 		ArrayList<GeoPoint> pointList = getPoints(d.shapePoints);
 		
 		nodes = new ArrayList<GuidanceNode>();
@@ -39,7 +45,7 @@ public class GuidanceRoute {
 				int maneuver = d.GuidanceNodeCollection[i].maneuverType;
 				double length = d.GuidanceLinkCollection[linkIndex].length;
 			
-				nodes.add(new GuidanceNode(info, loc, maneuver, length));
+				nodes.add(new GuidanceNode(info, loc, maneuver, length, linkIndex));
 			} else {
 				/* if the node is not a turn, add the length of the
 				*  corresponding link to the length of the link of the
@@ -61,10 +67,9 @@ public class GuidanceRoute {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(boundingBox.toString() + "\n");
 		
 		for (GuidanceNode g : nodes) {
-			sb.append(g.toString());
+			sb.append(g.toString() + "\n\n");
 		}
 		return sb.toString();
 	}

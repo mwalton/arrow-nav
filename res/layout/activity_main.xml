@@ -30,13 +30,13 @@
 	        android:onClick="drawRoute" 
 	        />
         <ImageButton
-            android:contentDescription="@string/start_nav"
+            android:contentDescription="@string/get_guidance_narrative"
 	        android:layout_width="48dp"
 			android:layout_height="48dp"
 			android:gravity="center"
 			android:src="@drawable/nav_arrow"
 			android:scaleType="fitCenter"
-			android:onClick="beginNavigation" />
+			android:onClick="showGuidanceNarrative" />
         <ImageButton
             android:contentDescription="@string/usr_loc"
 	        android:layout_width="48dp"

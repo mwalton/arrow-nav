@@ -37,9 +37,9 @@ import com.mapquest.android.maps.ServiceResponse.Info;
  */
 
 public class MainActivity extends MapActivity {
-	public final static String DESTINATION = "com.example.myfirstapp.DESTINATION";
-	public final static String USR_LAT = "com.example.myfirstapp.USR_LAT";
-	public final static String USR_LNG = "com.example.myfirstapp.USR_LNG";
+	public final static String DESTINATION = "com.hci.cyclenav.DESTINATION";
+	public final static String USR_LAT = "com.hci.cyclenav.USR_LAT";
+	public final static String USR_LNG = "com.hci.cyclenav.USR_LNG";
 	
 	protected MapView map;							//the map object
     private MyLocationOverlay myLocationOverlay;	//a dot representing the user
@@ -56,7 +56,7 @@ public class MainActivity extends MapActivity {
       setupMyLocation();							//localize the map to the user
     }
     
-    public void beginNavigation(View view) {
+    public void showGuidanceNarrative(View view) {
     	Intent intent = new Intent(this, GuidanceNarrative.class);
     	EditText editText = (EditText) findViewById(R.id.location_field);
     	String to = editText.getText().toString();

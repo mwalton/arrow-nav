@@ -2,6 +2,7 @@ package com.hci.cyclenav;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +40,7 @@ import com.hci.cyclenav.guidance.*;
  * 
  * @see SystemUiHider
  */
-public class CycleNavigation extends Activity {
+public class ArrowNavigation extends Activity {
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -67,15 +68,22 @@ public class CycleNavigation extends Activity {
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
+	private GuidanceRoute route;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.activity_cycle_navigation);
+		setContentView(R.layout.activity_arrow_navigation);
+		
+		//Intent intent = getIntent();
+		Intent intent = getIntent();
+		ArrayList<GuidanceNode> nodes = intent.getParcelableArrayListExtra(GuidanceNarrative.GUIDANCE_NODES);
+		route = new GuidanceRoute(nodes);
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
+		
+		((TextView) contentView).setText(route.toString());
 
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.

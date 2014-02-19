@@ -6,6 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="show_route">Show Route</string>
     <string name="start_nav">Begin Navigation</string>
+    <string name="get_guidance_narrative">Start Guidance Narr Activity</string>
     <string name="usr_loc">User Location</string>
     <string name="destination_label">Enter Destination</string>
     <string name="api_key">Fmjtd%7Cluur29a2ng%2Cax%3Do5-90z0qa</string>

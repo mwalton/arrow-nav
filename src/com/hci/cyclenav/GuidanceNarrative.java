@@ -28,11 +28,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class GuidanceNarrative extends Activity {
+	public final static String GUIDANCE_NODES = "com.hci.cyclenav.GUIDANCE_NODES";
+	private GuidanceRoute route;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,8 @@ public class GuidanceNarrative extends Activity {
 		String destination = intent.getStringExtra(MainActivity.DESTINATION);
 		double usrLat = intent.getDoubleExtra(MainActivity.USR_LAT, 0);
 		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
+		
+		route = new GuidanceRoute();
 	    
 	    //Construct the appropriate HTTP request and send it to JSONhelper
 	    Toast.makeText(getApplicationContext(), "Calculating Route" , Toast.LENGTH_LONG).show();
@@ -54,6 +60,14 @@ public class GuidanceNarrative extends Activity {
 	    JSONHelper json = new JSONHelper();
     	json.execute(request);
 	}
+	
+	public void beginNavigation(View view) {
+    	Intent intent = new Intent(this, ArrowNavigation.class);
+  
+    	intent.putParcelableArrayListExtra(GUIDANCE_NODES, route.getNodes());
+    	
+    	startActivity(intent);
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,7 +118,7 @@ public class GuidanceNarrative extends Activity {
 	    		JsonObject obj = parser.parse(result).getAsJsonObject();
 	    		Gson gson = new Gson();
 	    		GuidanceData data = gson.fromJson(obj.get("guidance"), GuidanceData.class);
-	    		GuidanceRoute route = new GuidanceRoute(data);
+	    		route = new GuidanceRoute(data);
 	    		// pass context and data to the custom adapter
 		        NarrativeListAdapter adapter = new NarrativeListAdapter(getApplicationContext(), route.getNodes());
 		        
