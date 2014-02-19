@@ -76,22 +76,6 @@ public class CycleNavigation extends Activity {
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
-		
-		Intent intent = getIntent();
-		String destination = intent.getStringExtra(MainActivity.DESTINATION);
-		double usrLat = intent.getDoubleExtra(MainActivity.USR_LAT, 0);
-		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
-		
-		TextView textView = (TextView) findViewById(R.id.fullscreen_content);
-	    textView.setText(destination + "\n" + usrLat + "\n" + usrLng);
-	    
-	    //Construct the appropriate HTTP request and send it to JSONhelper
-	    Toast.makeText(getApplicationContext(), "Calculating Route" , Toast.LENGTH_LONG).show();
-	    String source = usrLat + ", " + usrLng;
-	    String request = new HttpUtil(this, destination, source).getHttp();
-	    Logger.getLogger(Logger.class.getName()).log(Level.INFO, request);
-	    JSONHelper json = new JSONHelper();
-    	json.execute(request);
 
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
@@ -199,54 +183,5 @@ public class CycleNavigation extends Activity {
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
 	
-	class JSONHelper extends AsyncTask<String, String, String> {
-
-	    @Override
-	    protected String doInBackground(String... uri) {
-	        HttpClient httpclient = new DefaultHttpClient();
-	        HttpResponse response;
-	        
-	        //HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), 3000);
-	        //HttpConnectionParams.setSoTimeout(httpclient.getParams(), 10000);
-	        
-	        String responseString = null;
-	        try {
-	            response = httpclient.execute(new HttpGet(uri[0]));
-	            StatusLine statusLine = response.getStatusLine();
-	            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-	                ByteArrayOutputStream out = new ByteArrayOutputStream();
-	                response.getEntity().writeTo(out);
-	                out.close();
-	                responseString = out.toString();
-	            } else{
-	                //Closes the connection.
-	                response.getEntity().getContent().close();
-	                throw new IOException(statusLine.getReasonPhrase());
-	            }
-	        } catch (ClientProtocolException ex) {
-	        	Logger.getLogger(Logger.class.getName()).log(Level.SEVERE,ex.getMessage());
-	        } catch (IOException ex) {
-	        	Logger.getLogger(Logger.class.getName()).log(Level.SEVERE,ex.getMessage());
-	        }
-	        return responseString;
-	    }
-
-	    @Override
-	    protected void onPostExecute(String result) {
-	    	TextView textView = (TextView) findViewById(R.id.fullscreen_content);
-	    	
-	    	JsonParser parser = new JsonParser();
-	    	
-	    	try {
-	    		JsonObject obj = parser.parse(result).getAsJsonObject();
-	    		Gson gson = new Gson();
-	    		GuidanceData data = gson.fromJson(obj.get("guidance"), GuidanceData.class);
-	    		GuidanceRoute route = new GuidanceRoute(data);
-	    		textView.setText(route.toString());
-	    	} catch (JsonSyntaxException er) {
-				Toast.makeText(getApplicationContext(), er.toString(), Toast.LENGTH_LONG).show();
-				textView.setText("\n\n\n\nBad JSON formatting: " + "\n" + er.toString());
-	    	}
-	    }
-	}
+	
 }

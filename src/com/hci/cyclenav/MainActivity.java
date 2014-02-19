@@ -57,7 +57,7 @@ public class MainActivity extends MapActivity {
     }
     
     public void beginNavigation(View view) {
-    	Intent intent = new Intent(this, CycleNavigation.class);
+    	Intent intent = new Intent(this, GuidanceNarrative.class);
     	EditText editText = (EditText) findViewById(R.id.location_field);
     	String to = editText.getText().toString();
     	

@@ -38,6 +38,10 @@
             android:label="@string/title_activity_cycle_navigation"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        <activity
+            android:name="com.hci.cyclenav.GuidanceNarrative"
+            android:label="@string/title_activity_guidance_narrative" >
+        </activity>
     </application>
 
 </manifest>

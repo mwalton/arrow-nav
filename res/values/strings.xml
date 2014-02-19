@@ -10,9 +10,9 @@
     <string name="destination_label">Enter Destination</string>
     <string name="api_key">Fmjtd%7Cluur29a2ng%2Cax%3Do5-90z0qa</string>
     <string name="title_activity_cycle_navigation">CycleNavigation</string>
-    
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="dummy_location">Soquel, CA</string>
+    <string name="title_activity_guidance_narrative">GuidanceNarrative</string>
 
 </resources>
