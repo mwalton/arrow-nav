@@ -20,6 +20,7 @@ import com.google.gson.JsonSyntaxException;
 import com.hci.cyclenav.guidance.GuidanceData;
 import com.hci.cyclenav.guidance.GuidanceRoute;
 import com.hci.cyclenav.guidance.HttpUtil;
+import com.hci.cyclenav.util.NarrativeListAdapter;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,10 +43,6 @@ public class GuidanceNarrative extends Activity {
 		String destination = intent.getStringExtra(MainActivity.DESTINATION);
 		double usrLat = intent.getDoubleExtra(MainActivity.USR_LAT, 0);
 		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
-		
-		TextView textView = (TextView) findViewById(R.id.test_narrative);
-		textView.setMovementMethod(new ScrollingMovementMethod());
-	    textView.setText(destination + "\n" + usrLat + "\n" + usrLng);
 	    
 	    //Construct the appropriate HTTP request and send it to JSONhelper
 	    Toast.makeText(getApplicationContext(), "Calculating Route" , Toast.LENGTH_LONG).show();
@@ -98,7 +96,7 @@ public class GuidanceNarrative extends Activity {
 
 	    @Override
 	    protected void onPostExecute(String result) {
-	    	TextView textView = (TextView) findViewById(R.id.test_narrative);
+	    	ListView listView = (ListView) findViewById(R.id.listview);
 	    	
 	    	JsonParser parser = new JsonParser();
 	    	
@@ -107,10 +105,13 @@ public class GuidanceNarrative extends Activity {
 	    		Gson gson = new Gson();
 	    		GuidanceData data = gson.fromJson(obj.get("guidance"), GuidanceData.class);
 	    		GuidanceRoute route = new GuidanceRoute(data);
-	    		textView.setText(route.toString());
+	    		// pass context and data to the custom adapter
+		        NarrativeListAdapter adapter = new NarrativeListAdapter(getApplicationContext(), route.getNodes());
+		        
+				// setListAdapter
+		        listView.setAdapter(adapter);
 	    	} catch (JsonSyntaxException er) {
 				Toast.makeText(getApplicationContext(), er.toString(), Toast.LENGTH_LONG).show();
-				textView.setText("\n\n\n\nBad JSON formatting: " + "\n" + er.toString());
 	    	}
 	    }
 	}

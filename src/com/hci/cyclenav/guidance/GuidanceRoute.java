@@ -1,13 +1,13 @@
 package com.hci.cyclenav.guidance;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import com.mapquest.android.maps.BoundingBox;
 import com.mapquest.android.maps.GeoPoint;
 
 public class GuidanceRoute {
 	BoundingBox boundingBox;
-	LinkedList<GuidanceNode> nodes;
+	ArrayList<GuidanceNode> nodes;
 	int currentNodeIndex;
 	
 	public GuidanceRoute() {
@@ -24,9 +24,9 @@ public class GuidanceRoute {
 		GeoPoint lr = new GeoPoint(d.boundingBox.lr.lat, d.boundingBox.lr.lng);
 		boundingBox = new BoundingBox(ul, lr);
 		
-		LinkedList<GeoPoint> pointList = getPoints(d.shapePoints);
+		ArrayList<GeoPoint> pointList = getPoints(d.shapePoints);
 		
-		nodes = new LinkedList<GuidanceNode>();
+		nodes = new ArrayList<GuidanceNode>();
 		for (int i = 0; i < d.GuidanceNodeCollection.length; ++i) {
 			//if the node is a turn, append it to the list
 			if (d.GuidanceNodeCollection[i].infoCollection != null) {
@@ -48,10 +48,14 @@ public class GuidanceRoute {
 				if (d.GuidanceNodeCollection[i].linkIds.length > 0 &&
 						nodes.size() > 0) {
 					int linkIndex = d.GuidanceNodeCollection[i].linkIds[0];
-					nodes.getLast().length += d.GuidanceLinkCollection[linkIndex].length;
+					nodes.get(nodes.size() - 1).length += d.GuidanceLinkCollection[linkIndex].length;
 				}
 			}
 		}
+	}
+	
+	public ArrayList<GuidanceNode> getNodes() {
+		return nodes;
 	}
 	
 	@Override
@@ -67,8 +71,8 @@ public class GuidanceRoute {
 	
 	//Adapter function converts the shapePoints array of length n
 	// to a linkedList of latitude/longitude ordered pairs of size n / 2
-	LinkedList<GeoPoint> getPoints(double[] latLngArray) {
-		LinkedList<GeoPoint> pointList = new LinkedList<GeoPoint>();
+	ArrayList<GeoPoint> getPoints(double[] latLngArray) {
+		ArrayList<GeoPoint> pointList = new ArrayList<GeoPoint>();
 		
 		for(int i = 0; i < latLngArray.length; i += 2) {
 			double lat = latLngArray[i];
@@ -125,33 +129,4 @@ public class GuidanceRoute {
     private double rad2deg(double rad) {
     	return (rad * 180.0 / Math.PI);
     }
-	
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*:: 	 Stores a single node (eg an intersection)	                :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    
-	class GuidanceNode {
-		String info;			//from guidanceNode
-		GeoPoint location;		//from shapePoints[] via guidanceLink
-		int maneuverType;		//from guidanceNode
-		double length;
-		int[] linkIds;			//from guidanceNode
-		
-		GuidanceNode(String info, GeoPoint point, int maneuverType, double length) {
-			this.info = info;
-			this.location = point;
-			this.maneuverType = maneuverType;
-			this.length = length;
-		}
-		
-		@Override
-		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			sb.append(info + ":\n");
-			sb.append("Length: " + length + "m\n");
-			sb.append(location.toString() + "\n\n");
-			
-			return sb.toString();
-		}
-	}
 }
