@@ -17,7 +17,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.MalformedJsonException;
 import com.hci.cyclenav.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -29,9 +28,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.hci.cyclenav.guidance.*;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

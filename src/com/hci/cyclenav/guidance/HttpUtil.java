@@ -1,4 +1,6 @@
-package com.hci.cyclenav;
+package com.hci.cyclenav.guidance;
+
+import com.hci.cyclenav.R;
 
 import android.content.Context;
 

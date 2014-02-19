@@ -1,4 +1,4 @@
-package com.hci.cyclenav;
+package com.hci.cyclenav.guidance;
 
 import com.google.gson.annotations.SerializedName;
 
