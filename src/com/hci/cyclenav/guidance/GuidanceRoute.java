@@ -2,7 +2,6 @@ package com.hci.cyclenav.guidance;
 
 import java.util.ArrayList;
 
-import com.mapquest.android.maps.BoundingBox;
 import com.mapquest.android.maps.GeoPoint;
 
 /* GuidanceRoute.java
@@ -36,6 +35,8 @@ public class GuidanceRoute {
 		ArrayList<GeoPoint> pointList = getPoints(d.shapePoints);
 		
 		nodes = new ArrayList<GuidanceNode>();
+		currentNodeIndex = 0;
+		
 		for (int i = 0; i < d.GuidanceNodeCollection.length; ++i) {
 			//if the node is a turn, append it to the list
 			if (d.GuidanceNodeCollection[i].infoCollection != null) {
@@ -68,6 +69,14 @@ public class GuidanceRoute {
 		return nodes;
 	}
 	
+	public GuidanceNode getCurrent() {
+		return nodes.get(currentNodeIndex);
+	}
+	
+	public GuidanceNode getNext() {
+		return nodes.get(currentNodeIndex + 1);
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -91,51 +100,4 @@ public class GuidanceRoute {
 		}
 		return pointList;
 	}
-	
-	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*::    Convenience functions for computing distance	            :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	
-	//get the distance in miles between the user and the next node
-	double milesToNextNode(GeoPoint usrLoc) {
-		GeoPoint nextNode = nodes.get(currentNodeIndex + 1).location;
-		return distance(usrLoc, nextNode);
-	}
-	
-	//get the 'progress' or percent complete (a value between 0 - 1)
-	//that represents how far the user has travelled along the current link
-	double currentLinkProgress(GeoPoint usrLoc) {
-		double dist = milesToNextNode(usrLoc);
-		double linkLength = nodes.get(currentNodeIndex).length;
-		double progress =  (linkLength - dist) / linkLength;
-		
-		return progress;
-	}
-	
-	//get the distance in miles between two GeoPoints
-	double distance(GeoPoint pnt1, GeoPoint pnt2) {
-		double lat1 = pnt1.getLatitude();
-		double lng1 = pnt1.getLongitude();
-		double lat2 = pnt2.getLatitude();
-		double lng2 = pnt2.getLongitude();
-	
-		double theta = lng1 - lng2;
-		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
-		dist = Math.acos(dist);
-		dist = rad2deg(dist);
-		dist = dist * 60 * 1.1515;
-	      
-		return dist;
-	}
-	
-
-    // This function converts decimal degrees to radians
-    private double deg2rad(double deg) {
-    	return (deg * Math.PI / 180.0);
-    }
-
-    //This function converts radians to decimal degrees
-    private double rad2deg(double rad) {
-    	return (rad * 180.0 / Math.PI);
-    }
 }

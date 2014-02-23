@@ -22,7 +22,12 @@ import com.hci.cyclenav.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,19 +39,19 @@ import android.widget.Toast;
 
 import com.hci.cyclenav.guidance.*;
 
-/* ArrowNavigaiton.java
+/** ArrowNavigaiton.java
  * Layout: cycle-nav/res/layout/activity_arrrow_navigation.xml
  * 
  * Turn-by-turn arrow navigation
  */
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- * 
- * @see SystemUiHider
- */
 public class ArrowNavigation extends Activity {
+	//Store navigation data and reference user location via locationManager
+	private GuidanceRoute route;
+	private LocationManager locationManager;
+	private LocationListener locationListener;
+	private NavigationUtil navUtil;
+	
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -74,85 +79,37 @@ public class ArrowNavigation extends Activity {
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
-	private GuidanceRoute route;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_arrow_navigation);
 		
-		//Intent intent = getIntent();
+		//UI init & configuration
+		final View controlsView = findViewById(R.id.fullscreen_content_controls);
+		final View contentView = findViewById(R.id.fullscreen_content);
+		setupUI(controlsView, contentView);
+		
+		//Get route from previous activity
 		Intent intent = getIntent();
 		ArrayList<GuidanceNode> nodes = intent.getParcelableArrayListExtra(GuidanceNarrative.GUIDANCE_NODES);
 		route = new GuidanceRoute(nodes);
-
-		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.fullscreen_content);
 		
-		((TextView) contentView).setText(route.toString());
-
-		// Set up an instance of SystemUiHider to control the system UI for
-		// this activity.
-		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
-				HIDER_FLAGS);
-		mSystemUiHider.setup();
-		mSystemUiHider
-				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
-					// Cached values.
-					int mControlsHeight;
-					int mShortAnimTime;
-
-					@Override
-					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-					public void onVisibilityChange(boolean visible) {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-							// If the ViewPropertyAnimator API is available
-							// (Honeycomb MR2 and later), use it to animate the
-							// in-layout UI controls at the bottom of the
-							// screen.
-							if (mControlsHeight == 0) {
-								mControlsHeight = controlsView.getHeight();
-							}
-							if (mShortAnimTime == 0) {
-								mShortAnimTime = getResources().getInteger(
-										android.R.integer.config_shortAnimTime);
-							}
-							controlsView
-									.animate()
-									.translationY(visible ? 0 : mControlsHeight)
-									.setDuration(mShortAnimTime);
-						} else {
-							// If the ViewPropertyAnimator APIs aren't
-							// available, simply show or hide the in-layout UI
-							// controls.
-							controlsView.setVisibility(visible ? View.VISIBLE
-									: View.GONE);
-						}
-
-						if (visible && AUTO_HIDE) {
-							// Schedule a hide().
-							delayedHide(AUTO_HIDE_DELAY_MILLIS);
-						}
-					}
-				});
-
-		// Set up the user interaction to manually show or hide the system UI.
-		contentView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				if (TOGGLE_ON_CLICK) {
-					mSystemUiHider.toggle();
-				} else {
-					mSystemUiHider.show();
-				}
-			}
-		});
-
-		// Upon interacting with UI controls, delay any scheduled hide()
-		// operations to prevent the jarring behavior of controls going away
-		// while interacting with the UI.
-		findViewById(R.id.dummy_button).setOnTouchListener(
-				mDelayHideTouchListener);
+		// Acquire a reference to the system Location Manager
+		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		// Define a listener that responds to location updates
+		locationListener = arrowLocationListener();
+		
+		/** Register the listener with the Location Manager to receive location updates
+		 * Params: String provider, long wait_in_ms, float delta_distance_in_meters, listener)
+		 */
+		Criteria criteria = new Criteria();
+	    String provider = locationManager.getBestProvider(criteria, false);
+		locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
+		
+		//Manually trigger an update using last known location
+		Location location = locationManager.getLastKnownLocation(provider);
+	    if (location != null) locationListener.onLocationChanged(location);
 	}
 
 	@Override
@@ -163,6 +120,72 @@ public class ArrowNavigation extends Activity {
 		// created, to briefly hint to the user that UI controls
 		// are available.
 		delayedHide(100);
+	}
+	
+	protected void setupUI(final View controlsView, final View contentView) {
+		// Set up an instance of SystemUiHider to control the system UI for
+				// this activity.
+				mSystemUiHider = SystemUiHider.getInstance(this, contentView,
+						HIDER_FLAGS);
+				mSystemUiHider.setup();
+				mSystemUiHider
+						.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
+							// Cached values.
+							int mControlsHeight;
+							int mShortAnimTime;
+
+							@Override
+							@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+							public void onVisibilityChange(boolean visible) {
+								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+									// If the ViewPropertyAnimator API is available
+									// (Honeycomb MR2 and later), use it to animate the
+									// in-layout UI controls at the bottom of the
+									// screen.
+									if (mControlsHeight == 0) {
+										mControlsHeight = controlsView.getHeight();
+									}
+									if (mShortAnimTime == 0) {
+										mShortAnimTime = getResources().getInteger(
+												android.R.integer.config_shortAnimTime);
+									}
+									controlsView
+											.animate()
+											.translationY(visible ? 0 : mControlsHeight)
+											.setDuration(mShortAnimTime);
+								} else {
+									// If the ViewPropertyAnimator APIs aren't
+									// available, simply show or hide the in-layout UI
+									// controls.
+									controlsView.setVisibility(visible ? View.VISIBLE
+											: View.GONE);
+								}
+
+								if (visible && AUTO_HIDE) {
+									// Schedule a hide().
+									delayedHide(AUTO_HIDE_DELAY_MILLIS);
+								}
+							}
+						});
+
+				// Set up the user interaction to manually show or hide the system UI.
+				contentView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (TOGGLE_ON_CLICK) {
+							mSystemUiHider.toggle();
+						} else {
+							mSystemUiHider.show();
+						}
+					}
+				});
+
+				// Upon interacting with UI controls, delay any scheduled hide()
+				// operations to prevent the jarring behavior of controls going away
+				// while interacting with the UI.
+				findViewById(R.id.dummy_button).setOnTouchListener(
+						mDelayHideTouchListener);
+
 	}
 
 	/**
@@ -196,6 +219,48 @@ public class ArrowNavigation extends Activity {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
+	// enable features of the overlay 
+    @Override
+    protected void onResume() {
+      super.onResume();
+    }
+
+    // disable features of the overlay when in the background 
+    @Override
+    protected void onPause() {
+      super.onPause();
+      locationManager.removeUpdates(locationListener);
+    }
+	/*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    /*::  				  LocationListener Implementation				 */
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 	
-	
+	protected LocationListener arrowLocationListener() {
+		return new LocationListener() {
+			@Override
+			public void onLocationChanged(Location location) {
+				final View contentView = findViewById(R.id.fullscreen_content);
+				((TextView) contentView).setText(location.toString());
+				
+			}
+
+			@Override
+			public void onProviderDisabled(String provider) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onProviderEnabled(String provider) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+	}
 }
