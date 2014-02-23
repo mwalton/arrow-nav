@@ -36,7 +36,7 @@
             android:name="com.hci.cyclenav.ArrowNavigation"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_cycle_navigation"
-            android:theme="@style/FullscreenTheme" >
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name="com.hci.cyclenav.GuidanceNarrative"

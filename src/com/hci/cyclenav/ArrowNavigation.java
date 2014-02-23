@@ -2,6 +2,7 @@ package com.hci.cyclenav;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,12 +33,15 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NavUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hci.cyclenav.guidance.*;
+import com.mapquest.android.maps.GeoPoint;
 
 /** ArrowNavigaiton.java
  * Layout: cycle-nav/res/layout/activity_arrrow_navigation.xml
@@ -50,7 +54,7 @@ public class ArrowNavigation extends Activity {
 	private GuidanceRoute route;
 	private LocationManager locationManager;
 	private LocationListener locationListener;
-	private NavigationUtil navUtil;
+	NavigationUtil navUtil = new NavigationUtil();
 	
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -239,8 +243,24 @@ public class ArrowNavigation extends Activity {
 		return new LocationListener() {
 			@Override
 			public void onLocationChanged(Location location) {
+				StringBuilder content = new StringBuilder();
+				GuidanceNode previous = route.getCurrent();
+				GuidanceNode next = route.getNext();
+				
+				GeoPoint previousPoint = previous.getLocation();
+				GeoPoint nextPoint = next.getLocation();
+				
+				
+				String distance = navUtil.distanceStr(nextPoint, location, 0.1);
+				double progress = 100 * navUtil.progress(previousPoint, nextPoint, location);
+				
+				content.append(previous.getInfo() + "\n");
+				content.append("Distance: " + distance + "\n");
+				content.append("Progress: " + new DecimalFormat("#.00").format(progress) + "%\n");
+				
+				 
 				final View contentView = findViewById(R.id.fullscreen_content);
-				((TextView) contentView).setText(location.toString());
+				((TextView) contentView).setText(content.toString());
 				
 			}
 
