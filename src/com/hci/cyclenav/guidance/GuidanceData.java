@@ -17,70 +17,75 @@ public class GuidanceData {
 	GuidanceLink[] GuidanceLinkCollection;
 	BoundingBox boundingBox;
 	int RouteLinkCount;
-	
+
 	@Override
-    public String toString() {
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		 
-        sb.append("Box: [" + boundingBox.ul.toString() + "]\n[" + boundingBox.lr.toString() + "]\n");
-        sb.append("Route Link Count: " + RouteLinkCount + "\n");
-        sb.append("Total Shape Points: " + shapePoints.length + "\n");
-        sb.append("Guidance Node Count: " + GuidanceNodeCollection.length + "\n");
-        sb.append("Guidance Link Count: " + GuidanceLinkCollection.length + "\n");
-        
-        return sb.toString();
+
+		sb.append("Box: [" + boundingBox.ul.toString() + "]\n["
+				+ boundingBox.lr.toString() + "]\n");
+		sb.append("Route Link Count: " + RouteLinkCount + "\n");
+		sb.append("Total Shape Points: " + shapePoints.length + "\n");
+		sb.append("Guidance Node Count: " + GuidanceNodeCollection.length
+				+ "\n");
+		sb.append("Guidance Link Count: " + GuidanceLinkCollection.length
+				+ "\n");
+
+		return sb.toString();
 	}
-	
+
 	class GuidanceNode {
 		@SerializedName("infoCollection")
 		String[] infoCollection;
 		@SerializedName("linkIds")
 		int[] linkIds;
 		int maneuverType;
-		
+
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-			
+
 			sb.append("Info: ");
 			if (infoCollection != null) {
-				for(int i = 0; i < infoCollection.length; ++i) {
+				for (int i = 0; i < infoCollection.length; ++i) {
 					sb.append(", " + infoCollection[i]);
 				}
-			} else sb.append("none");
+			} else
+				sb.append("none");
 			sb.append("\nManeuver: " + maneuverType + "\n");
 			sb.append("linkIds: ");
 			if (linkIds != null) {
-				for(int i = 0; i < linkIds.length; ++i) {
+				for (int i = 0; i < linkIds.length; ++i) {
 					sb.append(linkIds[i]);
 				}
-			} else sb.append("none");
+			} else
+				sb.append("none");
 			return sb.toString();
 		}
 	}
-	
+
 	class GuidanceLink {
 		int shapeIndex;
 		int shapeCount;
 		double length;
-		
+
 		@Override
 		public String toString() {
-			return "S Index: " + shapeIndex + "S Count: " 
-					+ shapeCount + "Length: " + length + "\n";
+			return "S Index: " + shapeIndex + "S Count: " + shapeCount
+					+ "Length: " + length + "\n";
 		}
 	}
-	
+
 	class GeoPoint {
 		double lat;
 		double lng;
-		
+
 		@Override
 		public String toString() {
 			return lat + ", " + lng;
 		}
 	}
-	
+
 	class BoundingBox {
 		GeoPoint ul;
 		GeoPoint lr;

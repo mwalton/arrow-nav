@@ -60,39 +60,40 @@ public class GuidanceNarrative extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_guidance_narrative);
-		
-		//get the intent package that was passed by ActivityMain
-		//and set the user location and destination to be sent to OGS
+
+		// get the intent package that was passed by ActivityMain
+		// and set the user location and destination to be sent to OGS
 		Intent intent = getIntent();
 		String destination = intent.getStringExtra(MainActivity.DESTINATION);
 		double usrLat = intent.getDoubleExtra(MainActivity.USR_LAT, 0);
 		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
-		
+
 		route = new GuidanceRoute();
-	    
-	    //Construct the appropriate HTTP string for JSONhelper
-	    Toast.makeText(getApplicationContext(), "Calculating Route" , Toast.LENGTH_LONG).show();
-	    String source = usrLat + ", " + usrLng;
-	    
-	    String request = new HttpUtil(this, source, destination).getHttp();
-	    
-	    //json debuggin: check logcat for the exact http request used
-	    Logger.getLogger(Logger.class.getName()).log(Level.INFO, request);
-	    
-	    //make the query and wait for a response in a asynchronous thread
-	    JSONHelper json = new JSONHelper();
-    	json.execute(request);
+
+		// Construct the appropriate HTTP string for JSONhelper
+		Toast.makeText(getApplicationContext(), "Calculating Route",
+				Toast.LENGTH_LONG).show();
+		String source = usrLat + ", " + usrLng;
+
+		String request = new HttpUtil(this, source, destination).getHttp();
+
+		// json debuggin: check logcat for the exact http request used
+		Logger.getLogger(Logger.class.getName()).log(Level.INFO, request);
+
+		// make the query and wait for a response in a asynchronous thread
+		JSONHelper json = new JSONHelper();
+		json.execute(request);
 	}
-	
-	//begins the arrow UI turn-by-turn navigation
+
+	// begins the arrow UI turn-by-turn navigation
 	public void beginNavigation(View view) {
-    	Intent intent = new Intent(this, ArrowNavigation.class);
-    	
-    	//Serialize the GuidanceNodes and add them to the intent
-    	intent.putParcelableArrayListExtra(GUIDANCE_NODES, route.getNodes());
-    	
-    	startActivity(intent);
-    }
+		Intent intent = new Intent(this, ArrowNavigation.class);
+
+		// Serialize the GuidanceNodes and add them to the intent
+		intent.putParcelableArrayListExtra(GUIDANCE_NODES, route.getNodes());
+
+		startActivity(intent);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,62 +101,70 @@ public class GuidanceNarrative extends Activity {
 		getMenuInflater().inflate(R.menu.guidance_narrative, menu);
 		return true;
 	}
-	
-	//Makes the HTTP request and listens for the JSON response in a non-UI thread
+
+	// Makes the HTTP request and listens for the JSON response in a non-UI
+	// thread
 	class JSONHelper extends AsyncTask<String, String, String> {
 
-	    @Override
-	    protected String doInBackground(String... uri) {
-	        HttpClient httpclient = new DefaultHttpClient();
-	        HttpResponse response;
-	        
-	        String responseString = null;
-	        try {
-	            response = httpclient.execute(new HttpGet(uri[0]));
-	            StatusLine statusLine = response.getStatusLine();
-	            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-	                ByteArrayOutputStream out = new ByteArrayOutputStream();
-	                response.getEntity().writeTo(out);
-	                out.close();
-	                responseString = out.toString();
-	            } else{
-	                //Closes the connection.
-	                response.getEntity().getContent().close();
-	                throw new IOException(statusLine.getReasonPhrase());
-	            }
-	        } catch (ClientProtocolException ex) {
-	        	Logger.getLogger(Logger.class.getName()).log(Level.SEVERE,ex.getMessage());
-	        } catch (IOException ex) {
-	        	Logger.getLogger(Logger.class.getName()).log(Level.SEVERE,ex.getMessage());
-	        }
-	        return responseString;
-	    }
-	    
-	    //called when a response is received from the API
-	    @Override
-	    protected void onPostExecute(String result) {
-	    	ListView listView = (ListView) findViewById(R.id.listview);
-	    	
-	    	JsonParser parser = new JsonParser();
-	    	
-	    	try {
-	    		/* there are several JSON objects stored in the response
-	    		*  we only want the "guidance" one which contains navigation
-	    		*  so we use the normal JsonObject class to parse the data
-	    		*  then get just the "guidance" object to generate GuidanceData */
-	    		JsonObject obj = parser.parse(result).getAsJsonObject();
-	    		Gson gson = new Gson();
-	    		GuidanceData data = gson.fromJson(obj.get("guidance"), GuidanceData.class);
-	    		route = new GuidanceRoute(data);
-	    		// pass context and data to the custom adapter
-		        NarrativeListAdapter adapter = new NarrativeListAdapter(getApplicationContext(), route.getNodes());
-		        
+		@Override
+		protected String doInBackground(String... uri) {
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpResponse response;
+
+			String responseString = null;
+			try {
+				response = httpclient.execute(new HttpGet(uri[0]));
+				StatusLine statusLine = response.getStatusLine();
+				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					response.getEntity().writeTo(out);
+					out.close();
+					responseString = out.toString();
+				} else {
+					// Closes the connection.
+					response.getEntity().getContent().close();
+					throw new IOException(statusLine.getReasonPhrase());
+				}
+			} catch (ClientProtocolException ex) {
+				Logger.getLogger(Logger.class.getName()).log(Level.SEVERE,
+						ex.getMessage());
+			} catch (IOException ex) {
+				Logger.getLogger(Logger.class.getName()).log(Level.SEVERE,
+						ex.getMessage());
+			}
+			return responseString;
+		}
+
+		// called when a response is received from the API
+		@Override
+		protected void onPostExecute(String result) {
+			ListView listView = (ListView) findViewById(R.id.listview);
+
+			JsonParser parser = new JsonParser();
+
+			try {
+				/*
+				 * there are several JSON objects stored in the response we only
+				 * want the "guidance" one which contains navigation so we use
+				 * the normal JsonObject class to parse the data then get just
+				 * the "guidance" object to generate GuidanceData
+				 */
+				JsonObject obj = parser.parse(result).getAsJsonObject();
+				Gson gson = new Gson();
+				GuidanceData data = gson.fromJson(obj.get("guidance"),
+						GuidanceData.class);
+				route = new GuidanceRoute(data);
+				// pass context and data to the custom adapter
+				NarrativeListAdapter adapter = new NarrativeListAdapter(
+						getApplicationContext(), route.getNodes());
+
 				// setListAdapter
-		        listView.setAdapter(adapter);
-	    	} catch (JsonSyntaxException er) {
-				Toast.makeText(getApplicationContext(), er.toString(), Toast.LENGTH_LONG).show();
-	    	}
-	    }
+				listView.setAdapter(adapter);
+			} catch (JsonSyntaxException er) {
+				Toast.makeText(getApplicationContext(), er.toString(),
+						Toast.LENGTH_LONG).show();
+			}
+		}
 	}
 
 }

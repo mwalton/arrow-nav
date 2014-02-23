@@ -11,16 +11,47 @@
          TextureView, etc.
     -->
 
-    <TextView
-        android:id="@+id/fullscreen_content"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:keepScreenOn="true"
         android:gravity="center"
-        android:text="@string/dummy_content"
-        android:textColor="#33b5e5"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/text_before_arrow"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:gravity="center"
+            android:keepScreenOn="true"
+            android:text=""
+            android:textColor="#33b5e5"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/arrow_placeholder"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight=".5"
+            android:background="#ffffff"
+            android:contentDescription="REPLACE ME WITH DYNAMIC ARROWS!"
+            android:padding="25dp"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/text_after_arrow"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:gravity="center"
+            android:keepScreenOn="true"
+            android:text=""
+            android:textColor="#33b5e5"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <!--
          This FrameLayout insets its children based on system windows using

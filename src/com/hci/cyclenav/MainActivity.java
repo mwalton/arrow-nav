@@ -18,7 +18,6 @@ import com.mapquest.android.maps.RouteManager;
 import com.mapquest.android.maps.RouteResponse;
 import com.mapquest.android.maps.ServiceResponse.Info;
 
-
 /* MainActivity.java
  * Layout: cycle-nav/res/layout/activity_main.xml
  * 
@@ -46,151 +45,158 @@ public class MainActivity extends MapActivity {
 	public final static String DESTINATION = "com.hci.cyclenav.DESTINATION";
 	public final static String USR_LAT = "com.hci.cyclenav.USR_LAT";
 	public final static String USR_LNG = "com.hci.cyclenav.USR_LNG";
-	
-	protected MapView map;							//the map object
-    private MyLocationOverlay myLocationOverlay;	//a dot representing the user
-    private RouteManager myRoute;					//calculates and displays route
-    private boolean routeDisplayed;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-      setContentView(R.layout.activity_main);
-      
-      setupMapView();								//make the map
-      setupRoute();									//setup routeManager & err handling
-      setupMyLocation();							//localize the map to the user
-    }
-    
-    //called by get_guidance_narrative button onclick
-    public void showGuidanceNarrative(View view) {
-    	//make a new intent to be passed to the GuidanceNarrative activity
-    	Intent intent = new Intent(this, GuidanceNarrative.class);
-    	EditText editText = (EditText) findViewById(R.id.location_field);
-    	String to = editText.getText().toString();
-    	
-    	//Get the user's location from myLocationOverlay
-    	double lat = myLocationOverlay.getMyLocation().getLatitude();
-    	double lng = myLocationOverlay.getMyLocation().getLongitude();
-    	
-    	//add the destination & user location
-    	intent.putExtra(DESTINATION, to);
-    	intent.putExtra(USR_LAT, lat);
-    	intent.putExtra(USR_LNG, lng);
-    	
-    	//start a new GuidanceNarrative
-    	startActivity(intent);
-    }
-    
-    //moves the map view so the user's location is centered on the screen
-    public void setUserFocus(View view) {
-    	GeoPoint currentLocation = myLocationOverlay.getMyLocation();
-        map.getController().animateTo(currentLocation);
-        map.getController().setZoom(14);
-        map.getOverlays().add(myLocationOverlay);
-    }
-    
-    //Called when the user presses the 'pin' button
-    public void drawRoute(View view) {
-    	EditText editText = (EditText) findViewById(R.id.location_field);
-    	String to = editText.getText().toString();
-    	
-    	//Get the user's location from myLocationOverlay
-    	String from = myLocationOverlay.getMyLocation().getLatitude() + 
-    			"," + myLocationOverlay.getMyLocation().getLongitude();
-    	
-    	//Clear the current route ribbon (if one exists) and make a new one
-    	if (isRouteDisplayed()) myRoute.clearRoute();
-    	myRoute.createRoute(from, to);
-    	//map.getController().zoomOut();
-    	setDisplayed(true);
-    }
-    
-    //Link the map in the layout to the mapView object
-    private void setupMapView() {
-    	this.map = (MapView) findViewById(R.id.map);
-    }
+	protected MapView map; // the map object
+	private MyLocationOverlay myLocationOverlay; // a dot representing the user
+	private RouteManager myRoute; // calculates and displays route
+	private boolean routeDisplayed;
 
-    // set up a MyLocationOverlay and execute the runnable once we have a location fix 
-    private void setupMyLocation() {
-      this.myLocationOverlay = new MyLocationOverlay(this, map);
-      myLocationOverlay.enableMyLocation();
-      myLocationOverlay.runOnFirstFix(new Runnable() {
-        @Override
-        public void run() {
-          GeoPoint currentLocation = myLocationOverlay.getMyLocation();
-          map.getController().animateTo(currentLocation);
-          map.getController().setZoom(14);
-          map.getOverlays().add(myLocationOverlay);
-          
-          //should be set to true once navigation begins:
-          myLocationOverlay.setFollowing(false);  //don't follow the user's location
-        }
-      });
-    }
-   
-    // enable features of the overlay 
-    @Override
-    protected void onResume() {
-      myLocationOverlay.enableMyLocation();
-      myLocationOverlay.enableCompass();
-      super.onResume();
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 
-    // disable features of the overlay when in the background 
-    @Override
-    protected void onPause() {
-      super.onPause();
-      myLocationOverlay.disableCompass();
-      myLocationOverlay.disableMyLocation();
-    }
+		setupMapView(); // make the map
+		setupRoute(); // setup routeManager & err handling
+		setupMyLocation(); // localize the map to the user
+	}
 
+	// called by get_guidance_narrative button onclick
+	public void showGuidanceNarrative(View view) {
+		// make a new intent to be passed to the GuidanceNarrative activity
+		Intent intent = new Intent(this, GuidanceNarrative.class);
+		EditText editText = (EditText) findViewById(R.id.location_field);
+		String to = editText.getText().toString();
 
-    // setup route manager and link to mapview 
-    private void setupRoute() {
-    	String key = getString(R.string.api_key);
-    	myRoute = new RouteManager(this, key);
-        myRoute.setMapView(map);
-        myRoute.setBestFitRoute(false);
-        
-        /*Configure error handling and success feedback notifications
-         * when the user attempts to create a new route
-         * 
-         * RouteCallback throws RouteResponse objects when createRoute() is called
-         * if an error occurs, the code in onError() runs and a error Toast is generated
-         * if the route is generated successfully, onSuccess() is called
-         */
-        myRoute.setRouteCallback(new RouteManager.RouteCallback() {
+		// Get the user's location from myLocationOverlay
+		double lat = myLocationOverlay.getMyLocation().getLatitude();
+		double lng = myLocationOverlay.getMyLocation().getLongitude();
+
+		// add the destination & user location
+		intent.putExtra(DESTINATION, to);
+		intent.putExtra(USR_LAT, lat);
+		intent.putExtra(USR_LNG, lng);
+
+		// start a new GuidanceNarrative
+		startActivity(intent);
+	}
+
+	// moves the map view so the user's location is centered on the screen
+	public void setUserFocus(View view) {
+		GeoPoint currentLocation = myLocationOverlay.getMyLocation();
+		map.getController().animateTo(currentLocation);
+		map.getController().setZoom(14);
+		map.getOverlays().add(myLocationOverlay);
+	}
+
+	// Called when the user presses the 'pin' button
+	public void drawRoute(View view) {
+		EditText editText = (EditText) findViewById(R.id.location_field);
+		String to = editText.getText().toString();
+
+		// Get the user's location from myLocationOverlay
+		String from = myLocationOverlay.getMyLocation().getLatitude() + ","
+				+ myLocationOverlay.getMyLocation().getLongitude();
+
+		// Clear the current route ribbon (if one exists) and make a new one
+		if (isRouteDisplayed())
+			myRoute.clearRoute();
+		myRoute.createRoute(from, to);
+		// map.getController().zoomOut();
+		setDisplayed(true);
+	}
+
+	// Link the map in the layout to the mapView object
+	private void setupMapView() {
+		this.map = (MapView) findViewById(R.id.map);
+	}
+
+	// set up a MyLocationOverlay and execute the runnable once we have a
+	// location fix
+	private void setupMyLocation() {
+		this.myLocationOverlay = new MyLocationOverlay(this, map);
+		myLocationOverlay.enableMyLocation();
+		myLocationOverlay.runOnFirstFix(new Runnable() {
+			@Override
+			public void run() {
+				GeoPoint currentLocation = myLocationOverlay.getMyLocation();
+				map.getController().animateTo(currentLocation);
+				map.getController().setZoom(14);
+				map.getOverlays().add(myLocationOverlay);
+
+				// should be set to true once navigation begins:
+				myLocationOverlay.setFollowing(false); // don't follow the
+														// user's location
+			}
+		});
+	}
+
+	// enable features of the overlay
+	@Override
+	protected void onResume() {
+		myLocationOverlay.enableMyLocation();
+		myLocationOverlay.enableCompass();
+		super.onResume();
+	}
+
+	// disable features of the overlay when in the background
+	@Override
+	protected void onPause() {
+		super.onPause();
+		myLocationOverlay.disableCompass();
+		myLocationOverlay.disableMyLocation();
+	}
+
+	// setup route manager and link to mapview
+	private void setupRoute() {
+		String key = getString(R.string.api_key);
+		myRoute = new RouteManager(this, key);
+		myRoute.setMapView(map);
+		myRoute.setBestFitRoute(false);
+
+		/*
+		 * Configure error handling and success feedback notifications when the
+		 * user attempts to create a new route
+		 * 
+		 * RouteCallback throws RouteResponse objects when createRoute() is
+		 * called if an error occurs, the code in onError() runs and a error
+		 * Toast is generated if the route is generated successfully,
+		 * onSuccess() is called
+		 */
+		myRoute.setRouteCallback(new RouteManager.RouteCallback() {
 			@Override
 			public void onError(RouteResponse routeResponse) {
-				Info info=routeResponse.info;
-				int statusCode=info.statusCode;
-				
+				Info info = routeResponse.info;
+				int statusCode = info.statusCode;
+
 				StringBuilder message = new StringBuilder();
-				message.append("Unable to create route.\n")
-					.append("Error: ").append(statusCode).append("\n")
-					.append("Message: ").append(info.messages);
-				Toast.makeText(getApplicationContext(), message.toString(), Toast.LENGTH_LONG).show();
+				message.append("Unable to create route.\n").append("Error: ")
+						.append(statusCode).append("\n").append("Message: ")
+						.append(info.messages);
+				Toast.makeText(getApplicationContext(), message.toString(),
+						Toast.LENGTH_LONG).show();
 			}
 
 			@Override
 			public void onSuccess(RouteResponse routeResponse) {
-				Toast.makeText(getApplicationContext(), "Calculating route", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "Calculating route",
+						Toast.LENGTH_LONG).show();
 			}
 		});
-    }
+	}
 
-    /* isRouteDisplayed() and setDisplayed() are just used to
-    *  check if a previous route needs to be cleared
-    */
-    @Override
-    public boolean isRouteDisplayed() {
-      return routeDisplayed;
-    }
-    
-    private void setDisplayed(boolean isDisplayed) {
-    	routeDisplayed = isDisplayed;
-    }
+	/*
+	 * isRouteDisplayed() and setDisplayed() are just used to check if a
+	 * previous route needs to be cleared
+	 */
+	@Override
+	public boolean isRouteDisplayed() {
+		return routeDisplayed;
+	}
+
+	private void setDisplayed(boolean isDisplayed) {
+		routeDisplayed = isDisplayed;
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
