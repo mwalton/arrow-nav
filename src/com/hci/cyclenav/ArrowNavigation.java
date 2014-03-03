@@ -260,23 +260,47 @@ public class ArrowNavigation extends Activity {
 		return new LocationListener() {
 			@Override
 			public void onLocationChanged(Location location) {
+				
+				/**
+				 * This method is called whenever the user location gets
+				 * a new fix.  It is probably a good idea to eventually offload some
+				 * of the non-UI proximity calculations to other methods
+				 * either static, in navUtil or in guidanceroute would
+				 * be good strategies.
+				 */
 				StringBuilder info = new StringBuilder();
 				StringBuilder proximity = new StringBuilder();
 				GuidanceNode previous = route.getCurrent();
-				GuidanceNode next = route.getNext();
+				GuidanceNode next = route.peekNext();
 
 				GeoPoint previousPoint = previous.getLocation();
 				GeoPoint nextPoint = next.getLocation();
+				
+				double distance = navUtil.distance(nextPoint, location);
+				
+				/**
+				 * ATTN : Jonathan
+				 * Stub for moving to next node when the user gets within < 50ft of a turn
+				 * this is how we will update the UI in correspondance to user proximity
+				 * to a turn
+				 */
+				if(distance < .01) {
+					previous = route.next();
+					next = route.peekNext();
+					previousPoint = previous.getLocation();
+					nextPoint = next.getLocation();
+				}
 
-				String distance = navUtil.distanceStr(nextPoint, location, 0.1);
+				String distStr = navUtil.distanceStr(nextPoint, location, 0.1);
 				double progress = 100 * navUtil.progress(previousPoint,
 						nextPoint, location);
 
 				info.append(previous.getInfo());
-				proximity.append(distance + "\n");
+				proximity.append(distStr + "\n");
 				proximity.append(new DecimalFormat("#.00").format(progress)
 						+ "%\n");
-
+				
+				//ATTN JONATHAN : this is what I use to update the arrow image
 				ImageView imgView = (ImageView) findViewById(R.id.arrow_placeholder);
 				imgView.setImageResource(navUtil.getManeuverIcon(previous));
 
@@ -284,7 +308,6 @@ public class ArrowNavigation extends Activity {
 				final View afterArrow = findViewById(R.id.text_after_arrow);
 				((TextView) beforeArrow).setText(info.toString());
 				((TextView) afterArrow).setText(proximity.toString());
-
 			}
 
 			@Override

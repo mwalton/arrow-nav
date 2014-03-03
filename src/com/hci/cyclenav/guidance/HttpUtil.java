@@ -36,8 +36,9 @@ public class HttpUtil {
 	// Builds and returns the finished HTTP request
 	public String getHttp() {
 		// if any keys are undefined, set them to default values
-		if (httpStr.indexOf("routeType") < 0)
-			append("routeType", "bicycle");
+		//UNCOMMENT AND HANDLE BIKE/CAR USER SETTINGS!!!
+		//if (httpStr.indexOf("routeType") < 0)
+			//append("routeType", "bicycle");
 		if (httpStr.indexOf("narrativeType") < 0)
 			append("narrativeType", "text");
 		if (httpStr.indexOf("fishbone") < 0)

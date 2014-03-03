@@ -70,13 +70,19 @@ public class GuidanceRoute {
 	public ArrayList<GuidanceNode> getNodes() {
 		return nodes;
 	}
-
+	
+	// get nodes for distance calculation
 	public GuidanceNode getCurrent() {
 		return nodes.get(currentNodeIndex);
 	}
 
-	public GuidanceNode getNext() {
+	public GuidanceNode peekNext() {
 		return nodes.get(currentNodeIndex + 1);
+	}
+	
+	public GuidanceNode next() {
+		++currentNodeIndex;
+		return nodes.get(currentNodeIndex);
 	}
 
 	@Override
