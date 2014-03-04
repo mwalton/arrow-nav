@@ -22,7 +22,7 @@ public class ArrowAnimation extends View {
 	int arrowType;
 
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void onDraw(Canvas canvas) { 
 		super.onDraw(canvas);
 
 		black.setColor(Color.BLACK);
