@@ -65,6 +65,10 @@ public class GuidanceRoute {
 			}
 		}
 	}
+	
+	public int index() {
+		return currentNodeIndex;
+	}
 
 	// expose the nodes for serialization and parceling
 	public ArrayList<GuidanceNode> getNodes() {

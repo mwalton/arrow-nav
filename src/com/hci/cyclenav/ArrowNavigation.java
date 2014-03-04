@@ -285,24 +285,26 @@ public class ArrowNavigation extends Activity {
 				 * to a turn
 				 */
 				if(distance < .01) {
-					previous = route.next();
-					next = route.peekNext();
-					previousPoint = previous.getLocation();
-					nextPoint = next.getLocation();
+					if (route.index() < route.getNodes().size()) {
+						previous = route.next();
+						next = route.peekNext();
+						previousPoint = previous.getLocation();
+						nextPoint = next.getLocation();
+					}
 				}
 
 				String distStr = navUtil.distanceStr(nextPoint, location, 0.1);
 				double progress = 100 * navUtil.progress(previousPoint,
 						nextPoint, location);
 
-				info.append(previous.getInfo());
+				info.append(next.getInfo());
 				proximity.append(distStr + "\n");
 				proximity.append(new DecimalFormat("#.00").format(progress)
 						+ "%\n");
 				
 				//ATTN JONATHAN : this is what I use to update the arrow image
 				ImageView imgView = (ImageView) findViewById(R.id.arrow_placeholder);
-				imgView.setImageResource(navUtil.getManeuverIcon(previous));
+				imgView.setImageResource(navUtil.getManeuverIcon(next));
 
 				final View beforeArrow = findViewById(R.id.text_before_arrow);
 				final View afterArrow = findViewById(R.id.text_after_arrow);
@@ -313,7 +315,6 @@ public class ArrowNavigation extends Activity {
 			@Override
 			public void onProviderDisabled(String provider) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
