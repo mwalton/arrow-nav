@@ -10,7 +10,7 @@ public class ArrowAnimation extends View {
 	// float used to indicate how far the arrow is. Default set to 0;
 	float percent = 0;
 
-	// rectangle used as a mask for our animation
+	// rectangle used as a mask for our animation 
 	Rect mask = new Rect();
 
 	int counter = 0;
