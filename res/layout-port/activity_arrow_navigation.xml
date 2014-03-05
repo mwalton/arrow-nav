@@ -1,5 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:arrownav="http://schemas.android.com/apk/res/com.hci.cyclenav"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
@@ -28,8 +29,19 @@
             android:textColor="#33b5e5"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <ImageView
+        
+        <com.hci.cyclenav.util.ArrowAnimation
+            android:id="@+id/arrowAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:padding="25dp"
+            android:scaleType="fitCenter"
+            android:layout_weight=".5"
+            arrownav:percentFilled="0"
+            arrownav:arrowType="straight" />
+        
+<!-- <ImageView
             android:id="@+id/arrow_placeholder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -38,7 +50,7 @@
             android:background="#ffffff"
             android:contentDescription="REPLACE ME WITH DYNAMIC ARROWS!"
             android:padding="25dp"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter" /> -->
 
         <TextView
             android:id="@+id/text_after_arrow"

@@ -1,7 +1,13 @@
 package com.hci.cyclenav.util;
 
+import com.hci.cyclenav.R;
+import com.hci.cyclenav.guidance.GuidanceNode;
+import com.hci.cyclenav.guidance.GuidanceNode.maneuver;
+
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.*;
+import android.util.AttributeSet;
 import android.view.View;
 
 public class ArrowAnimation extends View {
@@ -19,24 +25,26 @@ public class ArrowAnimation extends View {
 	 * an int that is used to indicate which arrow has been passed in 1:
 	 * straight 2: left 3: right 4: uturn
 	 */
-	int arrowType;
+	GuidanceNode.maneuver arrowType;
 
 	@Override
-	protected void onDraw(Canvas canvas) { 
+	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
 		black.setColor(Color.BLACK);
 		black.setStyle(Paint.Style.FILL);
 
 		// This draws the arrow with the appropriate mask on it
-		if (arrowType == 1) {
+		if (arrowType == maneuver.STRAIGHT || arrowType == maneuver.BECOMES
+				|| arrowType == maneuver.STAY_STRAIGHT || arrowType == maneuver.MERGE_STRAIGHT) {
 			drawStraightArrow(canvas, Paint.Style.FILL);
 			canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight()
 					* (1 - percent), black);
 			drawStraightArrow(canvas, Paint.Style.STROKE);
 		}
 
-		if (arrowType == 2) {
+		if (arrowType == maneuver.SHARP_LEFT || arrowType == maneuver.STAY_LEFT
+				|| arrowType == maneuver.LEFT || arrowType == maneuver.SLIGHT_LEFT) {
 			int rectBottom = canvas.getHeight();
 			int rectRight = canvas.getWidth();
 
@@ -68,7 +76,8 @@ public class ArrowAnimation extends View {
 			canvas.drawRect(0, 0, rectRight, rectBottom, black);
 			drawLeftArrow(canvas, Paint.Style.STROKE);
 		}
-		if (arrowType == 3) {
+		if (arrowType == maneuver.SHARP_RIGHT || arrowType == maneuver.STAY_RIGHT
+				|| arrowType == maneuver.RIGHT || arrowType == maneuver.SLIGHT_RIGHT) {
 			int rectBottom = canvas.getHeight();
 			int rectLeft = 0;
 
@@ -102,7 +111,8 @@ public class ArrowAnimation extends View {
 			drawRightArrow(canvas, Paint.Style.STROKE);
 		}
 
-		if (arrowType == 4) {
+		if (arrowType == maneuver.UTURN || arrowType == maneuver.UTURN_LEFT ||
+				arrowType == maneuver.UTURN_RIGHT) {
 			drawUturn(canvas, Paint.Style.FILL);
 			if (counter < 50)
 				canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(),
@@ -256,17 +266,36 @@ public class ArrowAnimation extends View {
 
 	// Draws a triangle between these three points with the gven paint style
 
-	public ArrowAnimation(Context context) {
-		super(context);
-
+	public ArrowAnimation(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		
+		TypedArray a = context.getTheme().obtainStyledAttributes(
+		        attrs,
+		        R.styleable.ArrowAnimation,
+		        0, 0);
+		try {
+			this.percent = a.getFloat(R.styleable.ArrowAnimation_percentFilled, 0);
+			int arrowNum = a.getInteger(R.styleable.ArrowAnimation_arrowType, 0);
+			
+			switch (arrowNum) {
+				case 0: arrowType = maneuver.STRAIGHT; break;
+				case 1: arrowType = maneuver.LEFT; break;
+				case 2: arrowType = maneuver.RIGHT; break;
+				case 3: arrowType = maneuver.UTURN; break;
+				default: arrowType = maneuver.STRAIGHT; break;
+			}
+			
+			} finally {
+				a.recycle();
+				}
 	}
 
-	public void setArrowType(int arrow) {
+	public void setArrowType(GuidanceNode.maneuver arrow) {
 		arrowType = arrow;
 	}
 
 	// set current percentage to arrow as you can here
-	public void setArrowFill(float percentage) {
+	public void setFill(float percentage) {
 		percent = percentage;
 
 	}

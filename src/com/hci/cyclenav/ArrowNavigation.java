@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.hci.cyclenav.util.ArrowAnimation;
 import com.hci.cyclenav.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -294,17 +295,22 @@ public class ArrowNavigation extends Activity {
 				}
 
 				String distStr = navUtil.distanceStr(nextPoint, location, 0.1);
-				double progress = 100 * navUtil.progress(previousPoint,
+				float progress = (float) navUtil.progress(previousPoint,
 						nextPoint, location);
+				if (progress < 0) progress = 0;
 
 				info.append(next.getInfo());
 				proximity.append(distStr + "\n");
-				proximity.append(new DecimalFormat("#.00").format(progress)
+				proximity.append(new DecimalFormat("#.00").format(progress * 100)
 						+ "%\n");
 				
 				//ATTN JONATHAN : this is what I use to update the arrow image
-				ImageView imgView = (ImageView) findViewById(R.id.arrow_placeholder);
-				imgView.setImageResource(navUtil.getManeuverIcon(next));
+				//ImageView imgView = (ImageView) findViewById(R.id.arrow_placeholder);
+				//imgView.setImageResource(navUtil.getManeuverIcon(next));
+				
+				ArrowAnimation arrow = (ArrowAnimation) findViewById(R.id.arrowAnimation);
+				arrow.setArrowType(next.getManeuverType());
+				arrow.setFill(progress);
 
 				final View beforeArrow = findViewById(R.id.text_before_arrow);
 				final View afterArrow = findViewById(R.id.text_after_arrow);

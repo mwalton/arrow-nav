@@ -10,5 +10,15 @@
         <attr name="buttonBarStyle" format="reference" />
         <attr name="buttonBarButtonStyle" format="reference" />
     </declare-styleable>
+    
+    <declare-styleable name="ArrowAnimation">
+       <attr name="percentFilled" format="float" />
+       <attr name="arrowType" format="enum" >
+           <enum name="straight" value="0"/>
+           <enum name="left" value="1"/>
+           <enum name="right" value="2"/>
+           <enum name="uturn" value="3"/>
+       </attr>
+   </declare-styleable>
 
 </resources>
