@@ -50,6 +50,7 @@ public class MainActivity extends MapActivity {
 	private MyLocationOverlay myLocationOverlay; // a dot representing the user
 	private RouteManager myRoute; // calculates and displays route
 	private boolean routeDisplayed;
+	private boolean validRoute = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -63,22 +64,28 @@ public class MainActivity extends MapActivity {
 
 	// called by get_guidance_narrative button onclick
 	public void showGuidanceNarrative(View view) {
-		// make a new intent to be passed to the GuidanceNarrative activity
-		Intent intent = new Intent(this, GuidanceNarrative.class);
-		EditText editText = (EditText) findViewById(R.id.location_field);
-		String to = editText.getText().toString();
-
-		// Get the user's location from myLocationOverlay
-		double lat = myLocationOverlay.getMyLocation().getLatitude();
-		double lng = myLocationOverlay.getMyLocation().getLongitude();
-
-		// add the destination & user location
-		intent.putExtra(DESTINATION, to);
-		intent.putExtra(USR_LAT, lat);
-		intent.putExtra(USR_LNG, lng);
-
-		// start a new GuidanceNarrative
-		startActivity(intent);
+		if(myLocationOverlay.getMyLocation() != null) {
+			// make a new intent to be passed to the GuidanceNarrative activity
+			Intent intent = new Intent(this, GuidanceNarrative.class);
+			EditText editText = (EditText) findViewById(R.id.location_field);
+			String to = editText.getText().toString();
+	
+			// Get the user's location from myLocationOverlay
+			double lat = myLocationOverlay.getMyLocation().getLatitude();
+			double lng = myLocationOverlay.getMyLocation().getLongitude();
+	
+			// add the destination & user location
+			intent.putExtra(DESTINATION, to);
+			intent.putExtra(USR_LAT, lat);
+			intent.putExtra(USR_LNG, lng);
+	
+			// start a new GuidanceNarrative
+			startActivity(intent);
+		} else {
+			Toast.makeText(getApplicationContext(), "Attempting to get your location...",
+					Toast.LENGTH_LONG).show();
+		}
+		
 	}
 
 	// moves the map view so the user's location is centered on the screen
@@ -91,19 +98,28 @@ public class MainActivity extends MapActivity {
 
 	// Called when the user presses the 'pin' button
 	public void drawRoute(View view) {
-		EditText editText = (EditText) findViewById(R.id.location_field);
-		String to = editText.getText().toString();
-
-		// Get the user's location from myLocationOverlay
-		String from = myLocationOverlay.getMyLocation().getLatitude() + ","
-				+ myLocationOverlay.getMyLocation().getLongitude();
-
-		// Clear the current route ribbon (if one exists) and make a new one
-		if (isRouteDisplayed())
-			myRoute.clearRoute();
-		myRoute.createRoute(from, to);
-		// map.getController().zoomOut();
-		setDisplayed(true);
+		if(myLocationOverlay.getMyLocation() != null) {
+			EditText editText = (EditText) findViewById(R.id.location_field);
+			String to = editText.getText().toString();
+	
+			// Get the user's location from myLocationOverlay
+			String from = myLocationOverlay.getMyLocation().getLatitude() + ","
+					+ myLocationOverlay.getMyLocation().getLongitude();
+	
+			// Clear the current route ribbon (if one exists) and make a new one
+			if (isRouteDisplayed())
+				myRoute.clearRoute();
+			
+			Toast.makeText(getApplicationContext(), "Calculating route...",
+					Toast.LENGTH_LONG).show();
+			
+			myRoute.createRoute(from, to);
+			// map.getController().zoomOut();
+			setDisplayed(true);
+		} else {
+			Toast.makeText(getApplicationContext(), "Attempting to get your location...",
+					Toast.LENGTH_LONG).show();
+		}
 	}
 
 	// Link the map in the layout to the mapView object
@@ -166,6 +182,7 @@ public class MainActivity extends MapActivity {
 		myRoute.setRouteCallback(new RouteManager.RouteCallback() {
 			@Override
 			public void onError(RouteResponse routeResponse) {
+				validRoute = false;
 				Info info = routeResponse.info;
 				int statusCode = info.statusCode;
 
@@ -179,8 +196,7 @@ public class MainActivity extends MapActivity {
 
 			@Override
 			public void onSuccess(RouteResponse routeResponse) {
-				Toast.makeText(getApplicationContext(), "Calculating route",
-						Toast.LENGTH_LONG).show();
+				validRoute = true;
 			}
 		});
 	}

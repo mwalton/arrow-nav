@@ -69,9 +69,12 @@ public class GuidanceNarrative extends Activity {
 		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
 
 		route = new GuidanceRoute();
+		
+		//Prevent the user from pre-emptively pressing the beginNav button
+		findViewById(R.id.beginNavigation).setEnabled(false);
 
 		// Construct the appropriate HTTP string for JSONhelper
-		Toast.makeText(getApplicationContext(), "Calculating Route",
+		Toast.makeText(getApplicationContext(), "Calculating Route...",
 				Toast.LENGTH_LONG).show();
 		String source = usrLat + ", " + usrLng;
 
@@ -160,9 +163,14 @@ public class GuidanceNarrative extends Activity {
 
 				// setListAdapter
 				listView.setAdapter(adapter);
+				
+				//Allow the user to begin navigation
+				findViewById(R.id.beginNavigation).setEnabled(true);
 			} catch (JsonSyntaxException er) {
 				Toast.makeText(getApplicationContext(), er.toString(),
 						Toast.LENGTH_LONG).show();
+				//Prevent the user from pressing the beginNav button
+				findViewById(R.id.beginNavigation).setEnabled(false);
 			}
 		}
 	}
