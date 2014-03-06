@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/helpDialoglayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    <ImageView
+        android:id="@+id/mapPath"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/description"
+        android:src="@drawable/loc_pin" />
+    
+    <TextView
+        android:id="@+id/mapPathTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/mapPath"
+        android:layout_marginLeft="38dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/mapPath"
+        android:text="@string/mapPathHelp"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/begNav"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/mapPath"
+        android:contentDescription="@string/description1"
+        android:src="@drawable/nav_arrow" />
+
+    <TextView
+        android:id="@+id/begNavTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/begNav"
+        android:layout_toRightOf="@+id/begNav"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="38dp"
+        android:text="@string/begNavTxt"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+    
+    <ImageView 
+        android:id="@+id/userLoc"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_below="@id/begNav"
+        android:contentDescription="@string/description2"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/usr_loc"/>
+    
+    <TextView
+        android:id="@+id/userLocTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/userLoc"
+        android:layout_toRightOf="@+id/userLoc"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="38dp"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:paddingBottom="10dp"
+        android:text="@string/userLocationHelp"
+        android:textSize="20sp" />
+    
+    
+
+</RelativeLayout>

@@ -57,6 +57,10 @@ public class ArrowNavigation extends Activity {
 	private GuidanceRoute route;
 	private LocationManager locationManager;
 	private LocationListener locationListener;
+	protected static String checkPor = MainActivity.porOrientation;
+	protected static String checkLan = MainActivity.lanOrientation;
+	protected static String setOrientation = "True";
+	protected static String noSetOrientation = "False";
 	NavigationUtil navUtil = new NavigationUtil();
 
 	/**
@@ -123,6 +127,41 @@ public class ArrowNavigation extends Activity {
 		Location location = locationManager.getLastKnownLocation(provider);
 		if (location != null)
 			locationListener.onLocationChanged(location);
+	}
+	
+	public void onPopUpBt(View view) {
+		final Context context = this;
+		PopupMenu menu = new PopupMenu(this, view);
+		menu.getMenuInflater().inflate(R.menu.popmenu, menu.getMenu());
+		menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+			
+			public boolean onMenuItemClick(MenuItem item) {
+				// TODO Auto-generated method stub
+				switch (item.getItemId()) {
+				case R.id.begin_new_route:
+					Intent home = new Intent(context, MainActivity.class);
+					startActivity(home);
+					return true;
+					
+				case R.id.help:
+					AlertDialog.Builder builder = new AlertDialog.Builder(context);
+						builder.setTitle(R.string.help);
+				        builder.setMessage(R.string.helpTxt)
+				        	.setNeutralButton(R.string.helpexit, new DialogInterface.OnClickListener() {
+				        		public void onClick(DialogInterface dialog, int id) {
+				        			dialog.cancel();
+				        		}
+					        });
+
+				        AlertDialog alert = builder.create();
+					    alert.show();
+					    return true;
+				}
+			return false;
+			}
+	
+		});
+		menu.show();
 	}
 
 	@Override

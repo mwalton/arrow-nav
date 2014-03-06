@@ -45,6 +45,8 @@ public class MainActivity extends MapActivity {
 	public final static String DESTINATION = "com.hci.cyclenav.DESTINATION";
 	public final static String USR_LAT = "com.hci.cyclenav.USR_LAT";
 	public final static String USR_LNG = "com.hci.cyclenav.USR_LNG";
+	protected static String porOrientation = "";
+    protected static String lanOrientation = "";
 
 	protected MapView map; // the map object
 	private MyLocationOverlay myLocationOverlay; // a dot representing the user
@@ -203,6 +205,57 @@ public class MainActivity extends MapActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		final Context context = this;
+		switch (item.getItemId()) {
+		case R.id.help:
+			AlertDialog myDialog;
+			View alertview;
+			
+			AlertDialog.Builder helpBuilder = new AlertDialog.Builder(context);
+			LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+			alertview = inflater.inflate(R.layout.helplayout, null);
+			helpBuilder.setTitle(R.string.help);
+			helpBuilder.setView(alertview)
+			.setNeutralButton(R.string.helpexit, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			
+			myDialog = helpBuilder.create();
+			myDialog.show();
+			return true;
+		case R.id.action_settings:
+			AlertDialog levelDialog;
+			CharSequence[] items={"Portrait","Landscape"};
+				AlertDialog.Builder settingDialog = new AlertDialog.Builder(this);
+				settingDialog.setTitle(R.string.screen_orientation);
+				settingDialog.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						switch(item){
+						case 0:
+							MainActivity.porOrientation="True";
+							MainActivity.lanOrientation="False";
+							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+							break;
+						case 1:
+							MainActivity.lanOrientation="True";
+							MainActivity.porOrientation="False";
+							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+							break;
+						}
+					dialog.dismiss();
+					}
+				});
+			levelDialog = settingDialog.create();
+			levelDialog.show();
+			return true;
+		}
+			
+		return false;
 	}
 
 }
