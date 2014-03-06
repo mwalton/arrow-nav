@@ -13,6 +13,7 @@ import android.view.View;
 public class ArrowAnimation extends View {
 
 	Paint black = new Paint();
+	Bitmap flag;
 	// float used to indicate how far the arrow is. Default set to 0;
 	float percent = 0;
 
@@ -120,6 +121,13 @@ public class ArrowAnimation extends View {
 			drawUturn(canvas, Paint.Style.STROKE);
 			counter++;
 			counter = counter % 100;
+		}
+		
+		if (arrowType == maneuver.DESTINATION ||
+				arrowType == maneuver.DESTINATION_LEFT ||
+				arrowType == maneuver.DESTINATION_RIGHT) {
+			Rect scaleR = new Rect(0,0,this.getWidth(),this.getHeight());
+			canvas.drawBitmap(flag,null,scaleR,null);
 		}
 		// ATTN MYKE the next TWO lines should be deleted to stop constant
 		// animation
@@ -268,6 +276,10 @@ public class ArrowAnimation extends View {
 
 	public ArrowAnimation(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		//decode the flag bitmap for drawing later
+		flag = BitmapFactory.decodeResource(getResources(),
+                R.drawable.flag_white);
 		
 		TypedArray a = context.getTheme().obtainStyledAttributes(
 		        attrs,

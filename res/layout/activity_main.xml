@@ -18,8 +18,10 @@
 	        android:singleLine="true"
 		    android:lines="1"
 		    android:scrollHorizontally="true"
-	        android:hint="@string/destination_label" 
+		    android:text="37.0003731,-122.0631353"
 	        />
+	        <!-- android:hint="@string/destination_label" -->
+	        
         <ImageButton
             android:id="@+id/drawRoute"
             android:contentDescription="@string/show_route"

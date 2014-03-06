@@ -159,14 +159,15 @@ public class ArrowNavigation extends Activity {
 							if (mControlsHeight == 0) {
 								mControlsHeight = controlsView.getHeight();
 							}
+							
 							if (mShortAnimTime == 0) {
 								mShortAnimTime = getResources().getInteger(
 										android.R.integer.config_shortAnimTime);
 							}
 							controlsView
 									.animate()
-									.translationY(visible ? 0 : mControlsHeight)
-									.setDuration(mShortAnimTime);
+									.alpha(visible ? 1 : 0)
+									.setDuration(1000);
 						} else {
 							// If the ViewPropertyAnimator APIs aren't
 							// available, simply show or hide the in-layout UI
@@ -197,8 +198,8 @@ public class ArrowNavigation extends Activity {
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
-		findViewById(R.id.dummy_button).setOnTouchListener(
-				mDelayHideTouchListener);
+		//findViewById(R.id.dummy_button).setOnTouchListener(
+			//	mDelayHideTouchListener);
 
 	}
 
