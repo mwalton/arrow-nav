@@ -16,6 +16,12 @@ public class GuidanceData {
 	@SerializedName("GuidanceLinkCollection")
 	GuidanceLink[] GuidanceLinkCollection;
 	BoundingBox boundingBox;
+	
+	@SerializedName("statuscode")
+	int statuscode;
+	@SerializedName("messages")
+	String[] messages;
+	
 	int RouteLinkCount;
 
 	@Override
@@ -32,6 +38,14 @@ public class GuidanceData {
 				+ "\n");
 
 		return sb.toString();
+	}
+	
+	public String[] getMessages() {
+		return messages;
+	}
+	
+	public int getStatusCode() {
+		return statuscode;
 	}
 
 	class GuidanceNode {
