@@ -67,15 +67,21 @@ public class GuidanceNarrative extends Activity {
 		String destination = intent.getStringExtra(MainActivity.DESTINATION);
 		double usrLat = intent.getDoubleExtra(MainActivity.USR_LAT, 0);
 		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
+		String routeType = intent.getStringExtra(MainActivity.NAV_MODE);
 
 		route = new GuidanceRoute();
 
+		// Prevent the user from pre-emptively pressing the beginNav button
+		findViewById(R.id.beginNavigation).setEnabled(false);
+
 		// Construct the appropriate HTTP string for JSONhelper
-		Toast.makeText(getApplicationContext(), "Calculating Route",
+		Toast.makeText(getApplicationContext(), "Calculating Route...",
 				Toast.LENGTH_LONG).show();
 		String source = usrLat + ", " + usrLng;
-
-		String request = new HttpUtil(this, source, destination).getHttp();
+		
+		HttpUtil httpUtil = new HttpUtil(this, source, destination);
+		httpUtil.append("routeType", routeType);
+		String request = httpUtil.getHttp();
 
 		// json debuggin: check logcat for the exact http request used
 		Logger.getLogger(Logger.class.getName()).log(Level.INFO, request);
@@ -138,9 +144,18 @@ public class GuidanceNarrative extends Activity {
 		// called when a response is received from the API
 		@Override
 		protected void onPostExecute(String result) {
+			if (result == null || result.length() == 0) {
+				Toast.makeText(getApplicationContext(), "Invalid Location",
+						Toast.LENGTH_LONG).show();
+				//Time to bail out!
+				finish(); //close the current activity
+				return; //don't try to deserialize the result (which is empty)
+			}
 			ListView listView = (ListView) findViewById(R.id.listview);
 
 			JsonParser parser = new JsonParser();
+			GuidanceData data = new GuidanceData();
+			GuidanceData info = new GuidanceData();
 
 			try {
 				/*
@@ -151,19 +166,31 @@ public class GuidanceNarrative extends Activity {
 				 */
 				JsonObject obj = parser.parse(result).getAsJsonObject();
 				Gson gson = new Gson();
-				GuidanceData data = gson.fromJson(obj.get("guidance"),
-						GuidanceData.class);
-				route = new GuidanceRoute(data);
-				// pass context and data to the custom adapter
-				NarrativeListAdapter adapter = new NarrativeListAdapter(
-						getApplicationContext(), route.getNodes());
-
-				// setListAdapter
-				listView.setAdapter(adapter);
+				data = gson.fromJson(obj.get("guidance"), GuidanceData.class);
+				info = gson.fromJson(obj.get("info"), GuidanceData.class);
 			} catch (JsonSyntaxException er) {
 				Toast.makeText(getApplicationContext(), er.toString(),
 						Toast.LENGTH_LONG).show();
+				// Prevent the user from pressing the beginNav button
+				findViewById(R.id.beginNavigation).setEnabled(false);
 			}
+
+			  if(info.getStatusCode() == 0) {
+				  route = new GuidanceRoute(data);
+				  // pass context and data to the custom adapter
+				  NarrativeListAdapter adapter = new NarrativeListAdapter(
+						  getApplicationContext(), route.getNodes());
+				  
+				  // setListAdapter 
+				  listView.setAdapter(adapter);
+				  
+				  //Allow the user to begin navigation
+				  findViewById(R.id.beginNavigation).setEnabled(true); 
+			  } else {
+				  Toast.makeText(getApplicationContext(), "Error: " +
+						  info.getStatusCode() + "\n" + info.getMessages()[0],
+						  Toast.LENGTH_LONG).show(); 
+			  }
 		}
 	}
 

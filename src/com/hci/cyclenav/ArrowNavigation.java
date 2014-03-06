@@ -3,6 +3,14 @@ package com.hci.cyclenav;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.hci.cyclenav.util.ArrowAnimation;
+import com.hci.cyclenav.util.SystemUiHider;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -42,8 +50,6 @@ public class ArrowNavigation extends Activity {
 	private GuidanceRoute route;
 	private LocationManager locationManager;
 	private LocationListener locationListener;
-	protected static String checkPor = MainActivity.porOrientation;
-	protected static String checkLan = MainActivity.lanOrientation;
 	protected static String setOrientation = "True";
 	protected static String noSetOrientation = "False";
 	NavigationUtil navUtil = new NavigationUtil();
@@ -82,8 +88,11 @@ public class ArrowNavigation extends Activity {
 		setContentView(R.layout.activity_arrow_navigation);
 
 		// UI init & configuration
-		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.text_before_arrow);
+		final View[] controlsView = 
+			{findViewById(R.id.text_before_arrow),
+			 findViewById(R.id.text_after_arrow),
+			 findViewById(R.id.menuButton)};
+		final View contentView = findViewById(R.id.fullscreen_content_controls);
 		setupUI(controlsView, contentView);
 
 		// Get route from previous activity
@@ -159,7 +168,7 @@ public class ArrowNavigation extends Activity {
 		delayedHide(100);
 	}
 
-	protected void setupUI(final View controlsView, final View contentView) {
+	protected void setupUI(final View[] controls, final View contentView) {
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
@@ -168,7 +177,6 @@ public class ArrowNavigation extends Activity {
 		mSystemUiHider
 				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
 					// Cached values.
-					int mControlsHeight;
 					int mShortAnimTime;
 
 					@Override
@@ -179,22 +187,22 @@ public class ArrowNavigation extends Activity {
 							// (Honeycomb MR2 and later), use it to animate the
 							// in-layout UI controls at the bottom of the
 							// screen.
-							if (mControlsHeight == 0) {
-								mControlsHeight = controlsView.getHeight();
-							}
+							
 							if (mShortAnimTime == 0) {
 								mShortAnimTime = getResources().getInteger(
 										android.R.integer.config_shortAnimTime);
 							}
-							controlsView
+							for (View controlview : controls)
+								controlview
 									.animate()
-									.translationY(visible ? 0 : mControlsHeight)
-									.setDuration(mShortAnimTime);
+									.alpha(visible ? 1 : 0)
+									.setDuration(1000);
 						} else {
 							// If the ViewPropertyAnimator APIs aren't
 							// available, simply show or hide the in-layout UI
 							// controls.
-							controlsView.setVisibility(visible ? View.VISIBLE
+							for (View controlview : controls)
+								controlview.setVisibility(visible ? View.VISIBLE
 									: View.GONE);
 						}
 
@@ -220,8 +228,8 @@ public class ArrowNavigation extends Activity {
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
-		findViewById(R.id.dummy_button).setOnTouchListener(
-				mDelayHideTouchListener);
+		//findViewById(R.id.dummy_button).setOnTouchListener(
+			//	mDelayHideTouchListener);
 
 	}
 
@@ -318,17 +326,22 @@ public class ArrowNavigation extends Activity {
 				}
 
 				String distStr = navUtil.distanceStr(nextPoint, location, 0.1);
-				double progress = 100 * navUtil.progress(previousPoint,
+				float progress = (float) navUtil.progress(previousPoint,
 						nextPoint, location);
+				if (progress < 0) progress = 0;
 
 				info.append(next.getInfo());
 				proximity.append(distStr + "\n");
-				proximity.append(new DecimalFormat("#.00").format(progress)
+				proximity.append(new DecimalFormat("#.00").format(progress * 100)
 						+ "%\n");
 				
 				//ATTN JONATHAN : this is what I use to update the arrow image
-				ImageView imgView = (ImageView) findViewById(R.id.arrow_placeholder);
-				imgView.setImageResource(navUtil.getManeuverIcon(next));
+				//ImageView imgView = (ImageView) findViewById(R.id.arrow_placeholder);
+				//imgView.setImageResource(navUtil.getManeuverIcon(next));
+				
+				ArrowAnimation arrow = (ArrowAnimation) findViewById(R.id.arrowAnimation);
+				arrow.setArrowType(next.getManeuverType());
+				arrow.setFill(progress);
 
 				final View beforeArrow = findViewById(R.id.text_before_arrow);
 				final View afterArrow = findViewById(R.id.text_after_arrow);
@@ -338,7 +351,7 @@ public class ArrowNavigation extends Activity {
 
 			@Override
 			public void onProviderDisabled(String provider) {
-				// TODO Auto-generated method stub
+				// TODO Auto-generated method stub 
 			}
 
 			@Override
