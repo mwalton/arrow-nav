@@ -1,11 +1,14 @@
 package com.hci.cyclenav;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-//import android.app.Activity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,6 +20,7 @@ import com.mapquest.android.maps.MyLocationOverlay;
 import com.mapquest.android.maps.RouteManager;
 import com.mapquest.android.maps.RouteResponse;
 import com.mapquest.android.maps.ServiceResponse.Info;
+//import android.app.Activity;
 
 /* MainActivity.java
  * Layout: cycle-nav/res/layout/activity_main.xml
@@ -45,12 +49,13 @@ public class MainActivity extends MapActivity {
 	public final static String DESTINATION = "com.hci.cyclenav.DESTINATION";
 	public final static String USR_LAT = "com.hci.cyclenav.USR_LAT";
 	public final static String USR_LNG = "com.hci.cyclenav.USR_LNG";
+	public final static String NAV_MODE = "com.hci.cyclenav.NAV_MODE";
 
 	protected MapView map; // the map object
 	private MyLocationOverlay myLocationOverlay; // a dot representing the user
 	private RouteManager myRoute; // calculates and displays route
 	private boolean routeDisplayed;
-	private boolean validRoute = false;
+	private String navigationMode = "bicycle";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,7 @@ public class MainActivity extends MapActivity {
 			intent.putExtra(DESTINATION, to);
 			intent.putExtra(USR_LAT, lat);
 			intent.putExtra(USR_LNG, lng);
+			intent.putExtra(NAV_MODE, navigationMode);
 	
 			// start a new GuidanceNarrative
 			startActivity(intent);
@@ -182,7 +188,6 @@ public class MainActivity extends MapActivity {
 		myRoute.setRouteCallback(new RouteManager.RouteCallback() {
 			@Override
 			public void onError(RouteResponse routeResponse) {
-				validRoute = false;
 				Info info = routeResponse.info;
 				int statusCode = info.statusCode;
 
@@ -195,9 +200,7 @@ public class MainActivity extends MapActivity {
 			}
 
 			@Override
-			public void onSuccess(RouteResponse routeResponse) {
-				validRoute = true;
-			}
+			public void onSuccess(RouteResponse routeResponse) {}
 		});
 	}
 
@@ -219,6 +222,56 @@ public class MainActivity extends MapActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		final Context context = this;
+		switch (item.getItemId()) {
+		case R.id.help:
+			AlertDialog myDialog;
+			View alertview;
+			
+			AlertDialog.Builder helpBuilder = new AlertDialog.Builder(context);
+			LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+			alertview = inflater.inflate(R.layout.helplayout, null);
+			helpBuilder.setTitle(R.string.help);
+			helpBuilder.setView(alertview)
+			.setNeutralButton(R.string.helpexit, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			
+			myDialog = helpBuilder.create();
+			myDialog.show();
+			return true;
+		case R.id.action_settings:
+			AlertDialog levelDialog;
+			CharSequence[] items={"Bicycle","Driving","Pedestrian"};
+				AlertDialog.Builder settingDialog = new AlertDialog.Builder(this);
+				settingDialog.setTitle("Navigation Mode");
+				settingDialog.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						switch(item){
+						case 0:
+							navigationMode = "bicycle";
+							break;
+						case 1:
+							navigationMode = "fastest";
+							break;
+						case 2:
+							navigationMode = "pedestrian";
+							break;
+						}
+					dialog.dismiss();
+					}
+				});
+			levelDialog = settingDialog.create();
+			levelDialog.show();
+			return true;
+		}
+			
+		return false;
 	}
 
 }

@@ -18,12 +18,9 @@
 	        android:singleLine="true"
 		    android:lines="1"
 		    android:scrollHorizontally="true"
-		    android:text="37.0003731,-122.0631353"
+	        android:hint="@string/destination_label" 
 	        />
-	        <!-- android:hint="@string/destination_label" -->
-	        
         <ImageButton
-            android:id="@+id/drawRoute"
             android:contentDescription="@string/show_route"
 	        android:layout_width="48dp"
 	        android:layout_height="48dp"
@@ -33,7 +30,6 @@
 	        android:onClick="drawRoute" 
 	        />
         <ImageButton
-            android:id="@+id/guidanceNarrative"
             android:contentDescription="@string/get_guidance_narrative"
 	        android:layout_width="48dp"
 			android:layout_height="48dp"
@@ -42,7 +38,6 @@
 			android:scaleType="fitCenter"
 			android:onClick="showGuidanceNarrative" />
         <ImageButton
-            android:id="@+id/myLocation"
             android:contentDescription="@string/usr_loc"
 	        android:layout_width="48dp"
 			android:layout_height="48dp"

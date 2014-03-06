@@ -1,19 +1,8 @@
 package com.hci.cyclenav;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -24,26 +13,29 @@ import com.hci.cyclenav.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.hci.cyclenav.guidance.*;
+import com.hci.cyclenav.guidance.GuidanceNode;
+import com.hci.cyclenav.guidance.GuidanceRoute;
+import com.hci.cyclenav.guidance.NavigationUtil;
+import com.hci.cyclenav.util.SystemUiHider;
 import com.mapquest.android.maps.GeoPoint;
 
 /**
@@ -58,6 +50,8 @@ public class ArrowNavigation extends Activity {
 	private GuidanceRoute route;
 	private LocationManager locationManager;
 	private LocationListener locationListener;
+	protected static String setOrientation = "True";
+	protected static String noSetOrientation = "False";
 	NavigationUtil navUtil = new NavigationUtil();
 
 	/**
@@ -94,8 +88,11 @@ public class ArrowNavigation extends Activity {
 		setContentView(R.layout.activity_arrow_navigation);
 
 		// UI init & configuration
-		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.text_before_arrow);
+		final View[] controlsView = 
+			{findViewById(R.id.text_before_arrow),
+			 findViewById(R.id.text_after_arrow),
+			 findViewById(R.id.menuButton)};
+		final View contentView = findViewById(R.id.fullscreen_content_controls);
 		setupUI(controlsView, contentView);
 
 		// Get route from previous activity
@@ -125,6 +122,41 @@ public class ArrowNavigation extends Activity {
 		if (location != null)
 			locationListener.onLocationChanged(location);
 	}
+	
+	public void onPopUpBt(View view) {
+		final Context context = this;
+		PopupMenu menu = new PopupMenu(this, view);
+		menu.getMenuInflater().inflate(R.menu.popmenu, menu.getMenu());
+		menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+			
+			public boolean onMenuItemClick(MenuItem item) {
+				// TODO Auto-generated method stub
+				switch (item.getItemId()) {
+				case R.id.begin_new_route:
+					Intent home = new Intent(context, MainActivity.class);
+					startActivity(home);
+					return true;
+					
+				case R.id.help:
+					AlertDialog.Builder builder = new AlertDialog.Builder(context);
+						builder.setTitle(R.string.help);
+				        builder.setMessage(R.string.helpTxt)
+				        	.setNeutralButton(R.string.helpexit, new DialogInterface.OnClickListener() {
+				        		public void onClick(DialogInterface dialog, int id) {
+				        			dialog.cancel();
+				        		}
+					        });
+
+				        AlertDialog alert = builder.create();
+					    alert.show();
+					    return true;
+				}
+			return false;
+			}
+	
+		});
+		menu.show();
+	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -136,7 +168,7 @@ public class ArrowNavigation extends Activity {
 		delayedHide(100);
 	}
 
-	protected void setupUI(final View controlsView, final View contentView) {
+	protected void setupUI(final View[] controls, final View contentView) {
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
@@ -145,7 +177,6 @@ public class ArrowNavigation extends Activity {
 		mSystemUiHider
 				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
 					// Cached values.
-					int mControlsHeight;
 					int mShortAnimTime;
 
 					@Override
@@ -156,15 +187,13 @@ public class ArrowNavigation extends Activity {
 							// (Honeycomb MR2 and later), use it to animate the
 							// in-layout UI controls at the bottom of the
 							// screen.
-							if (mControlsHeight == 0) {
-								mControlsHeight = controlsView.getHeight();
-							}
 							
 							if (mShortAnimTime == 0) {
 								mShortAnimTime = getResources().getInteger(
 										android.R.integer.config_shortAnimTime);
 							}
-							controlsView
+							for (View controlview : controls)
+								controlview
 									.animate()
 									.alpha(visible ? 1 : 0)
 									.setDuration(1000);
@@ -172,7 +201,8 @@ public class ArrowNavigation extends Activity {
 							// If the ViewPropertyAnimator APIs aren't
 							// available, simply show or hide the in-layout UI
 							// controls.
-							controlsView.setVisibility(visible ? View.VISIBLE
+							for (View controlview : controls)
+								controlview.setVisibility(visible ? View.VISIBLE
 									: View.GONE);
 						}
 

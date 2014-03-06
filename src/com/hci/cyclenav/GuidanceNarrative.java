@@ -67,6 +67,7 @@ public class GuidanceNarrative extends Activity {
 		String destination = intent.getStringExtra(MainActivity.DESTINATION);
 		double usrLat = intent.getDoubleExtra(MainActivity.USR_LAT, 0);
 		double usrLng = intent.getDoubleExtra(MainActivity.USR_LNG, 0);
+		String routeType = intent.getStringExtra(MainActivity.NAV_MODE);
 
 		route = new GuidanceRoute();
 
@@ -77,8 +78,10 @@ public class GuidanceNarrative extends Activity {
 		Toast.makeText(getApplicationContext(), "Calculating Route...",
 				Toast.LENGTH_LONG).show();
 		String source = usrLat + ", " + usrLng;
-
-		String request = new HttpUtil(this, source, destination).getHttp();
+		
+		HttpUtil httpUtil = new HttpUtil(this, source, destination);
+		httpUtil.append("routeType", routeType);
+		String request = httpUtil.getHttp();
 
 		// json debuggin: check logcat for the exact http request used
 		Logger.getLogger(Logger.class.getName()).log(Level.INFO, request);

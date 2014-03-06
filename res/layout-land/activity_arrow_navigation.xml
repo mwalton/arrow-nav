@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".ArrowNavigation" >
+    tools:context=".ArrowNavigation"
+    android:fitsSystemWindows="true" >
 
     <!--
          The primary full-screen view. This can be replaced with whatever view
@@ -13,10 +14,12 @@
     -->
 
     <LinearLayout
+        android:id="@+id/fullscreen_content_controls"
         android:layout_width="match_parent" 
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        tools:ignore="UselessParent" >
 
         <TextView
             android:id="@+id/text_before_arrow"
@@ -41,17 +44,6 @@
             arrownav:percentFilled="0"
             arrownav:arrowType="straight" />
 
-<!-- <ImageView
-            android:id="@+id/arrow_placeholder"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight=".5"
-            android:background="#ffffff"
-            android:contentDescription="REPLACE ME WITH DYNAMIC ARROWS!"
-            android:padding="25dp"
-            android:scaleType="fitCenter" /> -->
-        
         <TextView
             android:id="@+id/text_after_arrow"
             android:layout_width="0dp"
@@ -65,34 +57,24 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!--
-         This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows.
-    -->
+	<LinearLayout 
+        android:id="@+id/menuButtonId"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+        
+        <ImageButton
+            android:id="@+id/menuButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="15dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="right"
+            android:src="@drawable/menubar"
+            android:onClick="onPopUpBt" 
+            android:contentDescription="@string/menuButtonDes"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" >
-
-        <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            style="?buttonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent" >
-
-            <Button
-                android:id="@+id/dummy_button"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dummy_button" />
-        </LinearLayout>
-    </FrameLayout>
-
+    </LinearLayout>
+   
 </FrameLayout>

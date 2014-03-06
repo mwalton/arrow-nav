@@ -6,12 +6,6 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
     <item 
-        android:id="@+id/begin_new_route"
-    	android:title="Begin new route"/>
-    <item 
-        android:id="@+id/show_directions_list"
-    	android:title="Directions List"/>
-    <item 
         android:id="@+id/help"
     	android:title="Help"/>
 
