@@ -65,6 +65,25 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+	<LinearLayout 
+        android:id="@+id/menuButtonId"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+        
+        <ImageButton
+            android:id="@+id/menuButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="15dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="right"
+            android:src="@drawable/menubar"
+            android:onClick="onPopUpBt" 
+            android:contentDescription="@string/menuButtonDes"/>
+
+    </LinearLayout>
     <!--
          This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows.
