@@ -320,7 +320,7 @@ public class ArrowNavigation extends Activity {
 
 			@Override
 			public void onProviderDisabled(String provider) {
-				// TODO Auto-generated method stub
+				// TODO Auto-generated method stub 
 			}
 
 			@Override
