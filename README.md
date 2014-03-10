@@ -3,6 +3,12 @@ cycle-nav
 
 CE 131 : Human Computer Interaction Class Project
 
+####To Do
+1.  straight progress arrow until turn proximity
+2.  onstop show hidden controllers
+3.  toggle map w/ swipe
+4.  ambiguity handler & places geocoding
+
 ####Getting the source (Making Android, Github & eclipse play nice together)  
 1.  In ADT, select __File > Import__ select __“Git” > “Projects from Git”__
 2.  Select “URI”.  click next
