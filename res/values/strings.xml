@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Cycle Nav</string>
+    <string name="app_name">Cycle Navigator</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="show_route">Show Route</string>
@@ -14,7 +14,7 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="dummy_location">Soquel, CA</string>
-    <string name="activity_title">Arrow Navigation</string>
+    <string name="activity_title">Cycle Navigator</string>
 	
 	<string name="show_directions_list">Direction List </string>
     <string name="direction_list">Direction List</string>

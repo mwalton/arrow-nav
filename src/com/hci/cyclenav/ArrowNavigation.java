@@ -89,9 +89,7 @@ public class ArrowNavigation extends Activity {
 
 		// UI init & configuration
 		final View[] controlsView = 
-			{findViewById(R.id.text_before_arrow),
-			 findViewById(R.id.text_after_arrow),
-			 findViewById(R.id.menuButton)};
+			{findViewById(R.id.menuButton)};
 		final View contentView = findViewById(R.id.fullscreen_content_controls);
 		setupUI(controlsView, contentView);
 
@@ -332,8 +330,8 @@ public class ArrowNavigation extends Activity {
 
 				info.append(next.getInfo());
 				proximity.append(distStr + "\n");
-				proximity.append(new DecimalFormat("#.00").format(progress * 100)
-						+ "%\n");
+				//proximity.append(new DecimalFormat("#.00").format(progress * 100)
+					//	+ "%\n");
 				
 				//ATTN JONATHAN : this is what I use to update the arrow image
 				//ImageView imgView = (ImageView) findViewById(R.id.arrow_placeholder);
