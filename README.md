@@ -1,21 +1,18 @@
-cycle-nav
+Cycle Navigator
 =========
-
-CE 131 : Human Computer Interaction Class Project
+###A minimally distracting GPS navigation system for android
 
 ####To Do
-1.  straight progress arrow until turn proximity
-2.  onstop show hidden controllers
-3.  toggle map w/ swipe
-4.  ambiguity handler & places geocoding
+1.  straight progress arrow until turn proximity (~100ft)
+4.  toggle map w/ swipe
+5.  ambiguity handler & places geocoding
 
-####Getting the source (Making Android, Github & eclipse play nice together)  
+####Working with Eclipse / Android Development Toolkit  
 1.  In ADT, select __File > Import__ select __“Git” > “Projects from Git”__
 2.  Select “URI”.  click next
 3.  Enter: `git@github.com:mwalton/cycle-nav.git` in the URI field
 4.  Select all branches
 5.  Choose where on your machine you want to put the repo. click next
 6.  Follow any additional prompts with default settings.
-7.  You now have the project source!!
 
-*__NOTE:__ DO NOT clone the source into your eclipse/ADT workspace.  Put it in some other folder (eg ../home/git/ ).  We will then be adding a reference to this location in your workspace.  (This is a safety measure because eclipse can easily mess up the repo if it is in the workspace)*
+*__NOTE:__ DO NOT clone the source into your eclipse/ADT workspace.  (This is a safety measure because eclipse can mess up the repo if it is in the workspace)*
