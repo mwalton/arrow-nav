@@ -1,6 +1,6 @@
 Cycle Navigator
 =========
-###A minimally distracting GPS navigation system for android
+###A minimally distracting navigation system for android
 
 ####To Do
 1.  straight progress arrow until turn proximity (~100ft)
