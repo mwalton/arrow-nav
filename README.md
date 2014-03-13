@@ -6,6 +6,9 @@ Cycle Navigator
 1.  straight progress arrow until turn proximity (~100ft)
 4.  toggle map w/ swipe
 5.  ambiguity handler & places geocoding
+6.  rerouting / recalculation
+7.  Slight right / left.  Other maneuver symbols
+8.  
 
 ####Working with Eclipse / Android Development Toolkit  
 1.  In ADT, select __File > Import__ select __“Git” > “Projects from Git”__
