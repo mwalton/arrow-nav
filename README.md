@@ -1,4 +1,4 @@
-Cycle Navigator
+ArrowNav
 =========
 ###A minimally distracting navigation system for android
 
